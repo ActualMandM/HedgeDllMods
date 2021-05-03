@@ -1,8 +1,9 @@
 #include "ArchiveTreePatcher.h"
-#include "Configuration.h"
 
-bool ArchiveTreePatcher::m_enabled = false;
-vector<ArchiveDependency> ArchiveTreePatcher::m_archiveDependencies = {};
+const std::vector<std::pair<const char*, const std::vector<const char*>>> NODES =
+{
+    { "LinkSonic", {"ev031", "ev041", "ev042", "ev091", "evSonic", "Sonic", "Title"}},
+};
 
 HOOK(bool, __stdcall, ParseArchiveTree, 0xD4C8E0, void* A1, char* pData, const size_t size, void* pDatabase)
 {
@@ -10,19 +11,19 @@ HOOK(bool, __stdcall, ParseArchiveTree, 0xD4C8E0, void* A1, char* pData, const s
     {
         std::stringstream stream;
 
-        for (ArchiveDependency const& node : ArchiveTreePatcher::m_archiveDependencies)
+        for (auto& node : NODES)
         {
             stream << "  <Node>\n";
-            stream << "    <Name>" << node.m_archive << "</Name>\n";
-            stream << "    <Archive>" << node.m_archive << "</Archive>\n";
+            stream << "    <Name>" << node.first << "</Name>\n";
+            stream << "    <Archive>" << node.first << "</Archive>\n";
             stream << "    <Order>" << 0 << "</Order>\n";
-            stream << "    <DefAppend>" << node.m_archive << "</DefAppend>\n";
+            stream << "    <DefAppend>" << node.first << "</DefAppend>\n";
 
-            for (string const& dependency : node.m_dependencies)
+            for (auto& archive : node.second)
             {
                 stream << "    <Node>\n";
-                stream << "      <Name>" << dependency << "</Name>\n";
-                stream << "      <Archive>" << dependency << "</Archive>\n";
+                stream << "      <Name>" << archive << "</Name>\n";
+                stream << "      <Archive>" << archive << "</Archive>\n";
                 stream << "      <Order>" << 0 << "</Order>\n";
                 stream << "    </Node>\n";
             }
@@ -50,21 +51,14 @@ HOOK(bool, __stdcall, ParseArchiveTree, 0xD4C8E0, void* A1, char* pData, const s
     return result;
 }
 
+bool ArchiveTreePatcher::enabled = false;
+
 void ArchiveTreePatcher::applyPatches()
 {
-    if (m_enabled)
-    {
+    if (enabled)
         return;
-    }
 
-    m_enabled = true;
-
-    // Read configurations
-    if (Configuration::m_modelType == ModelType::Sonic)
-    {
-        m_archiveDependencies.push_back(ArchiveDependency("06Sonic", { "Sonic" }));
-        m_archiveDependencies.push_back(ArchiveDependency("06Sonic_shared", { "06Sonic" }));
-    }
+    enabled = true;
 
     INSTALL_HOOK(ParseArchiveTree);
 }

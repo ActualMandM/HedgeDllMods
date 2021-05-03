@@ -5,11 +5,9 @@
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="Mod.cpp" />
     <ClCompile Include="ArchiveTreePatcher.cpp" />
-    <ClCompile Include="Configuration.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="ArchiveTreePatcher.h" />
-    <ClInclude Include="Configuration.h" />
   </ItemGroup>
 </Project>

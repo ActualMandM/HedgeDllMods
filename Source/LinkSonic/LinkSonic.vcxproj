@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{672c0b8a-7030-4793-8cf9-f536c84f321b}</ProjectGuid>
-    <RootNamespace>Sonic06DefinitiveExperience</RootNamespace>
+    <RootNamespace>LinkSonic</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -175,7 +175,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArchiveTreePatcher.cpp" />
-    <ClCompile Include="Configuration.cpp" />
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="Mod.cpp" />
     <ClCompile Include="Pch.cpp">
@@ -191,7 +190,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArchiveTreePatcher.h" />
-    <ClInclude Include="Configuration.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
