@@ -1,8 +1,9 @@
 #include "ArchiveTreePatcher.h"
 
-const std::vector<std::pair<const char*, const std::vector<const char*>>> NODES =
+vector<ArchiveDependency> ArchiveTreePatcher::m_archiveDependencies =
 {
     { "LinkSonic", {"ev031", "ev041", "ev042", "ev091", "evSonic", "Sonic", "Title"}},
+    { "LinkSonicEGB", {"cpz200"}}
 };
 
 HOOK(bool, __stdcall, ParseArchiveTree, 0xD4C8E0, void* A1, char* pData, const size_t size, void* pDatabase)
@@ -11,19 +12,19 @@ HOOK(bool, __stdcall, ParseArchiveTree, 0xD4C8E0, void* A1, char* pData, const s
     {
         std::stringstream stream;
 
-        for (auto& node : NODES)
+        for (ArchiveDependency const& node : ArchiveTreePatcher::m_archiveDependencies)
         {
             stream << "  <Node>\n";
-            stream << "    <Name>" << node.first << "</Name>\n";
-            stream << "    <Archive>" << node.first << "</Archive>\n";
+            stream << "    <Name>" << node.m_archive << "</Name>\n";
+            stream << "    <Archive>" << node.m_archive << "</Archive>\n";
             stream << "    <Order>" << 0 << "</Order>\n";
-            stream << "    <DefAppend>" << node.first << "</DefAppend>\n";
+            stream << "    <DefAppend>" << node.m_archive << "</DefAppend>\n";
 
-            for (auto& archive : node.second)
+            for (string const& dependency : node.m_dependencies)
             {
                 stream << "    <Node>\n";
-                stream << "      <Name>" << archive << "</Name>\n";
-                stream << "      <Archive>" << archive << "</Archive>\n";
+                stream << "      <Name>" << dependency << "</Name>\n";
+                stream << "      <Archive>" << dependency << "</Archive>\n";
                 stream << "      <Order>" << 0 << "</Order>\n";
                 stream << "    </Node>\n";
             }
@@ -59,6 +60,9 @@ void ArchiveTreePatcher::applyPatches()
         return;
 
     enabled = true;
+
+    // code is left here in the case that I can detect a file from the Eggmanland mod
+    // m_archiveDependencies.push_back(ArchiveDependency("LinkSonicEGB", { "cpz200" }));
 
     INSTALL_HOOK(ParseArchiveTree);
 }
