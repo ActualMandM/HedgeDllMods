@@ -2,8 +2,7 @@
 
 vector<ArchiveDependency> ArchiveTreePatcher::m_archiveDependencies =
 {
-    { "LinkSonic", {"ev031", "ev041", "ev042", "ev091", "evSonic", "Sonic", "Title"}},
-    { "LinkSonicEGB", {"cpz200"}}
+    { "LinkSonic", {"ev031", "ev041", "ev042", "ev091", "evSonic", "Sonic", "Title"}}
 };
 
 HOOK(bool, __stdcall, ParseArchiveTree, 0xD4C8E0, void* A1, char* pData, const size_t size, void* pDatabase)
@@ -60,9 +59,6 @@ void ArchiveTreePatcher::applyPatches()
         return;
 
     enabled = true;
-
-    // code is left here in the case that I can detect a file from the Eggmanland mod
-    // m_archiveDependencies.push_back(ArchiveDependency("LinkSonicEGB", { "cpz200" }));
 
     INSTALL_HOOK(ParseArchiveTree);
 }
