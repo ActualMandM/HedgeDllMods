@@ -8,13 +8,12 @@ extern "C" __declspec(dllexport) void Init()
 
 extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
 {
-
-    // check for loaded mods
-    for (Mod* mod : *mods->ModList)
-    {
-        if (!_stricmp(mod->Name, "eggmanland"))
-            ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("LinkSonicEGB", { "cpz200" }));
-    }
+	// check for loaded mods
+	for (Mod* mod : *mods->ModList)
+	{
+		if (!_stricmp(mod->Name, "eggmanland"))
+			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("LinkSonicEGB", { "cpz200" }));
+	}
 
 	ArchiveTreePatcher::applyPatches();
 }
