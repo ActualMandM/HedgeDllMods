@@ -5,7 +5,8 @@ enum TunicType
 	Green = 0,
 	Red = 1,
 	Blue = 2,
-	Purple = 3
+	Purple = 3,
+	Rainbow = 4
 };
 
 class Configuration
