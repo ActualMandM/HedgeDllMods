@@ -10,9 +10,8 @@ enum TunicType
 
 class Configuration
 {
-public:
-
-	static TunicType tunicType;
-
-	static bool load(const std::string& filePath);
+	public:
+		static TunicType tunicType;
+	
+		static bool load(const std::string& filePath);
 };
