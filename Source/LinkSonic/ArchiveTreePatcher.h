@@ -15,7 +15,8 @@ struct ArchiveDependency
 class ArchiveTreePatcher
 {
 	static bool enabled;
-public:
-	static vector<ArchiveDependency> m_archiveDependencies;
-	static void applyPatches();
+
+	public:
+		static vector<ArchiveDependency> m_archiveDependencies;
+		static void applyPatches();
 };
