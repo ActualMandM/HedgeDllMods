@@ -21,25 +21,28 @@ extern "C" __declspec(dllexport) void Init(ModInfo* modInfo)
 extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
 {
 	// SimulatorType configuration
-	switch (Configuration::simulatorType)
+	if (Configuration::enableSimulator)
 	{
-		case SimulatorType::Blue:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorBlue", { sonicArchives }));
-			break;
-		case SimulatorType::Black:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorBlack", { sonicArchives }));
-			break;
-		case SimulatorType::Green:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorGreen", { sonicArchives }));
-			break;
-		case SimulatorType::Pink:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorPink", { sonicArchives }));
-			break;
-		case SimulatorType::Red:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRed", { sonicArchives }));
-			break;
-		default:
-			break;
+		switch (Configuration::simulatorType)
+		{
+			case SimulatorType::Blue:
+				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorBlue", { sonicArchives }));
+				break;
+			case SimulatorType::Black:
+				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorBlack", { sonicArchives }));
+				break;
+			case SimulatorType::Green:
+				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorGreen", { sonicArchives }));
+				break;
+			case SimulatorType::Pink:
+				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorPink", { sonicArchives }));
+				break;
+			case SimulatorType::Red:
+				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRed", { sonicArchives }));
+				break;
+			default:
+				break;
+		}
 	}
 
 	ArchiveTreePatcher::applyPatches();
