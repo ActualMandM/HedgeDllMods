@@ -41,6 +41,7 @@ extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
 			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearancePurple", { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
 			break;
 		case TunicType::Rainbow:
+			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceRainbow", { "LinkSonic", "LinkSonicEGB" }));
 			break;
 		default:
 			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceGreen", { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
