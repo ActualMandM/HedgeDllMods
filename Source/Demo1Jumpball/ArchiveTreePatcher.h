@@ -2,7 +2,8 @@
 
 class ArchiveTreePatcher
 {
-    static bool enabled;
-public:
-    static void applyPatches();
+	static bool enabled;
+
+	public:
+		static void applyPatches();
 };
