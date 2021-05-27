@@ -5,6 +5,9 @@ vector<string> sonicArchives = { "ev031", "ev041", "ev042", "ev091", "evSonic", 
 
 extern "C" __declspec(dllexport) void Init()
 {
+	// Disable Title Loading Video by HyperBE32
+	WRITE_MEMORY(0xD6966E, uint8_t, 0xE9, 0x14, 0x01, 0x00, 0x00);
+
 	if (!Configuration::load("ColorsSonic.ini"))
 		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that ColorsSonic.ini exists in the mod's folder."), TEXT("Colors Sonic"), MB_ICONERROR);
 
