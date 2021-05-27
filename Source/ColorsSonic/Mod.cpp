@@ -21,8 +21,9 @@ extern "C" __declspec(dllexport) void Init()
 		WRITE_MEMORY(0x1277C0E, uint32_t, 0x015E6859);
 
 		// Disable Character Action Voices by HyperBE32
-		// TODO: disable trick and speed up voices!
 		WRITE_MEMORY(0xDFC993, uint32_t, 0xFFFFFF); /* 3002_action01 (used for bouncing off physics objects) */
+		WRITE_MEMORY(0xE4B684, uint32_t, 0xFFFFFF); /* 3002_action01 (used for tricks) */
+		WRITE_MEMORY(0xE4B8E0, uint32_t, 0xFFFFFF); /* 3002_action01 (used for trick finish) */
 		WRITE_MEMORY(0xE57E6F, uint32_t, 0xFFFFFF); /* 3002_action01 (used for jumping) */
 		WRITE_MEMORY(0x11D7B8C, uint32_t, 0xFFFFFF); /* 3002_action01 (used for grinding) */
 		WRITE_MEMORY(0x1117EF4, uint32_t, 0xFFFFFF); /* 3002_stumble */
@@ -41,6 +42,7 @@ extern "C" __declspec(dllexport) void Init()
 		WRITE_MEMORY(0x1117D27, uint32_t, 0xFFFFFF); /* 3002_action04 (used for boost) */
 		WRITE_MEMORY(0x11184E4, uint32_t, 0xFFFFFF); /* 3002_action04 (used for homing success) */
 		WRITE_MEMORY(0xE4466E, uint32_t, 0xFFFFFF); /* 3002_strain (used for pushing) */
+		WRITE_MEMORY(0xE3DADD, uint32_t, 0xFFFFFF); /* 3002_success01 (used for blast off) */
 		WRITE_MEMORY(0xE462AA, uint32_t, 0xFFFFFF); /* 3002_success01 (used for pulleys) */
 		WRITE_MEMORY(0x11D72DC, uint32_t, 0xFFFFFF); /* 3002_action06 */
 
