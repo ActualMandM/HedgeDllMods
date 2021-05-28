@@ -2,7 +2,7 @@
 
 bool Configuration::enableSimulator = false;
 SimulatorType Configuration::simulatorType = SimulatorType::Blue;
-CostumeType Configuration::costumeType = CostumeType::Default;
+CostumeType Configuration::costumeType = CostumeType::None;
 
 bool Configuration::load(const std::string& filePath)
 {
@@ -12,7 +12,7 @@ bool Configuration::load(const std::string& filePath)
 
 	enableSimulator = reader.GetBoolean("Appearance", "EnableSimulator", false);
 	simulatorType = (SimulatorType)reader.GetInteger("Appearance", "SimulatorType", SimulatorType::Blue);
-	costumeType = (CostumeType)reader.GetInteger("Appearance", "CostumeType", CostumeType::Default);
+	costumeType = (CostumeType)reader.GetInteger("Appearance", "CostumeType", CostumeType::None);
 
 	return true;
 }

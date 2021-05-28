@@ -2,16 +2,16 @@
 
 enum SimulatorType
 {
-	Blue = 0,
-	Black = 1,
-	Green = 2,
-	Pink = 3,
-	Red = 4
+	Blue,
+	Black,
+	Green,
+	Pink,
+	Red
 };
 
 enum CostumeType
 {
-	Default,
+	None,
 	Gold,
 	Silver,
 	Paint
