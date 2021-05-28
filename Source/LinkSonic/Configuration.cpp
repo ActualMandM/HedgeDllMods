@@ -8,7 +8,7 @@ bool Configuration::load(const std::string& filePath)
 	if (reader.ParseError() != 0)
 		return false;
 
-	tunicType = (TunicType)reader.GetInteger("Appearance", "TunicType", 0);
+	tunicType = (TunicType)reader.GetInteger("Appearance", "TunicType", TunicType::Green);
 
 	return true;
 }

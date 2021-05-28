@@ -6,23 +6,23 @@ extern "C" __declspec(dllexport) void Init()
 	// Disable Title Loading Video by HyperBE32
 	WRITE_MEMORY(0xD6966E, uint8_t, 0xE9, 0x14, 0x01, 0x00, 0x00);
 
-	// read configuration file
+	// check if the configuration file exists
 	if (!Configuration::load("LinkSonic.ini"))
 		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that LinkSonic.ini exists in the mod's folder."), TEXT("Link Sonic"), MB_ICONERROR);
 
 	// TunicType configuration
 	switch (Configuration::tunicType)
 	{
-		case TunicType::Red:
+		case Red:
 			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceRed", { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
 			break;
-		case TunicType::Blue:
+		case Blue:
 			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceBlue", { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
 			break;
-		case TunicType::Purple:
+		case Purple:
 			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearancePurple", { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
 			break;
-		case TunicType::Rainbow:
+		case Rainbow:
 			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceRainbow", { "LinkSonic", "LinkSonicEGB" }));
 			break;
 		default:
