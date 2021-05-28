@@ -23,6 +23,9 @@ extern "C" __declspec(dllexport) void Init()
 		case Paint:
 			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("UltimatePaint", { sonicArchives }));
 			break;
+		case PolkaDot:
+			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("UltimatePolkaDot", { sonicArchives }));
+			break;
 		default:
 			break;
 	}

@@ -14,7 +14,8 @@ enum CostumeType
 	None,
 	Gold,
 	Silver,
-	Paint
+	Paint,
+	PolkaDot
 };
 
 class Configuration
