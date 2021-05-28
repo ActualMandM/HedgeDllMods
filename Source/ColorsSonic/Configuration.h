@@ -9,11 +9,20 @@ enum SimulatorType
 	Red = 4
 };
 
+enum CostumeType
+{
+	Default,
+	Gold,
+	Silver,
+	Paint
+};
+
 class Configuration
 {
 	public:
 		static bool enableSimulator;
 		static SimulatorType simulatorType;
+		static CostumeType costumeType;
 	
 		static bool load(const std::string& filePath);
 };

@@ -11,6 +11,24 @@ extern "C" __declspec(dllexport) void Init()
 	if (!Configuration::load("ColorsSonic.ini"))
 		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that ColorsSonic.ini exists in the mod's folder."), TEXT("Colors Sonic"), MB_ICONERROR);
 
+	switch (Configuration::costumeType)
+	{
+		case Gold:
+			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("UltimateMetalGold", { sonicArchives }));
+			break;
+
+		case Silver:
+			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("UltimateMetalSilver", { sonicArchives }));
+			break;
+
+		case Paint:
+			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("UltimatePaint", { sonicArchives }));
+			break;
+
+		case Default:
+			break;
+	}
+	
 	// SimulatorType configuration
 	if (Configuration::enableSimulator)
 	{
@@ -55,30 +73,30 @@ extern "C" __declspec(dllexport) void Init()
 		WRITE_MEMORY(0x1231971, uint32_t, 0xFFFFFF); /* 3002_action05 (used for light dash) */
 		WRITE_MEMORY(0xDF0B63, uint32_t, 0xFFFFFF); /* 3002_damage06 */
 		WRITE_MEMORY(0x11D72DC, uint32_t, 0xFFFFFF); /* 3002_action06 */
-
+		
 		switch (Configuration::simulatorType)
 		{
-			case SimulatorType::Blue:
+			case Blue:
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorBlue", { "SimulatorSonic" }));
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocketBlue", { "PhantomRocket" }));
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommonBlue", { "SonicActionCommon" }));
 				break;
-			case SimulatorType::Black:
+			case Black:
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorBlack", { "SimulatorSonic" }));
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocketBlack", { "PhantomRocket" }));
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommonBlack", { "SonicActionCommon" }));
 				break;
-			case SimulatorType::Green:
+			case Green:
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorGreen", { "SimulatorSonic" }));
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocketGreen", { "PhantomRocket" }));
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommonGreen", { "SonicActionCommon" }));
 				break;
-			case SimulatorType::Pink:
+			case Pink:
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorPink", { "SimulatorSonic" }));
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocketPink", { "PhantomRocket" }));
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommonPink", { "SonicActionCommon" }));
 				break;
-			case SimulatorType::Red:
+			case Red:
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRed", { "SimulatorSonic" }));
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocketRed", { "PhantomRocket" }));
 				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommonRed", { "SonicActionCommon" }));
