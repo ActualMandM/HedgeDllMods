@@ -1,6 +1,9 @@
 #include "ArchiveTreePatcher.h"
 
-vector<ArchiveDependency> ArchiveTreePatcher::m_archiveDependencies = {};
+vector<ArchiveDependency> ArchiveTreePatcher::m_archiveDependencies =
+{
+	{ "ColorsSonic", {"ev031", "ev041", "ev042", "ev091", "evSonic", "Title"}}
+};
 
 HOOK(bool, __stdcall, ParseArchiveTree, 0xD4C8E0, void* A1, char* pData, const size_t size, void* pDatabase)
 {
