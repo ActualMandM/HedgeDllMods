@@ -1,7 +1,7 @@
 #include "ArchiveTreePatcher.h"
 #include "Configuration.h"
 
-vector<string> sonicArchives = { "ev031", "ev041", "ev042", "ev091", "evSonic", "Sonic", "Title" };
+vector<string> sonicArchives = { "Sonic", "Title", "ev031", "ev041", "ev042", "ev091", "evSonic" };
 
 extern "C" __declspec(dllexport) void Init()
 {
@@ -12,6 +12,7 @@ extern "C" __declspec(dllexport) void Init()
 	if (!Configuration::load("ColorsSonic.ini"))
 		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that ColorsSonic.ini exists in the mod's folder."), TEXT("Colors Sonic"), MB_ICONERROR);
 
+	// CostumeType configuration
 	switch (Configuration::costumeType)
 	{
 		case Gold:
@@ -104,6 +105,9 @@ extern "C" __declspec(dllexport) void Init()
 				break;
 		}
 	}
+	// Inject Colors Sonic into event archives and title screen
+	else
+		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("ColorsSonic", { "Title", "ev031", "ev041", "ev042", "ev091", "evSonic" }));
 
 	ArchiveTreePatcher::applyPatches();
 }
