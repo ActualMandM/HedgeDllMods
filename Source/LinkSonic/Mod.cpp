@@ -39,8 +39,6 @@ extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
 	{
 		if (!_stricmp(mod->Name, "eggmanland"))
 			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("LinkSonicEGB", { "cpz200" }));
-		if (!_stricmp(mod->Name, "colors sonic"))
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("LinkSonicDrift", { "Sonic" }));
 	}
 
 	ArchiveTreePatcher::applyPatches();
