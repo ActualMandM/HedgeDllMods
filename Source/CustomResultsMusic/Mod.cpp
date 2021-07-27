@@ -12,15 +12,15 @@ void ResultsDuration(float duration)
 
 extern "C" __declspec(dllexport) void Init()
 {
-    if (Configuration::songChoice == "sound_Custom")
-    {
-        if (Configuration::customSingle)
-            SingleResults();
-        else
-            ResultsDuration(Configuration::customDuration);
-    }
-    else if (Configuration::songChoice == "sound_sonic-Colors")
-        ResultsDuration(8.01f);
-    else if (Configuration::songChoice != "")
-        SingleResults();
+	if (Configuration::songChoice == "sound_Custom")
+	{
+		if (Configuration::customSingle)
+			SingleResults();
+		else
+			ResultsDuration(Configuration::customDuration);
+	}
+	else if (Configuration::songChoice == "sound_sonic-Colors")
+		ResultsDuration(8.01f);
+	else if (Configuration::songChoice != "")
+		SingleResults();
 }
