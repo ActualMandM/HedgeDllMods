@@ -10,9 +10,9 @@ bool Configuration::load(const std::string& filePath)
 	if (reader.ParseError() != 0)
 		return false;
 
-	songChoice = reader.Get("Main", "IncludeDir0", "sound_sonic-Classic");
-	customDuration = reader.GetFloat("Config", "customDuration", 6.1f);
-	customSingle = reader.GetBoolean("Config", "customSingle", false);
+	songChoice = reader.Get("Main", "IncludeDir0", songChoice);
+	customDuration = reader.GetFloat("Config", "customDuration", customDuration);
+	customSingle = reader.GetBoolean("Config", "customSingle", customSingle);
 
 	return true;
 }
