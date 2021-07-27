@@ -25,6 +25,8 @@ extern "C" __declspec(dllexport) void Init()
 		  || Configuration::songChoice == "sound_sonic-Adventure"
 		  || Configuration::songChoice == "sound_sonic-Adventure2"
 		  || Configuration::songChoice == "sound_sonic-SecretRings"
+		  || Configuration::songChoice == "sound_sonic-4Episode1"
+		  || Configuration::songChoice == "sound_sonic-4Episode2"
 		  || Configuration::songChoice == "sound_sonic-Forces"
 		  || Configuration::songChoice == ".")
 		SingleResults();
