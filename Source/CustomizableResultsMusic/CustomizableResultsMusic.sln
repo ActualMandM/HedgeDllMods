@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomResultsMusic", "CustomResultsMusic.vcxproj", "{672C0B8A-7030-4793-8CF9-F536C84F321B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomizableResultsMusic", "CustomizableResultsMusic.vcxproj", "{672C0B8A-7030-4793-8CF9-F536C84F321B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

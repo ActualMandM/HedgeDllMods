@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{672c0b8a-7030-4793-8cf9-f536c84f321b}</ProjectGuid>
-    <RootNamespace>CustomResultsMusic</RootNamespace>
+    <RootNamespace>CustomizableResultsMusic</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
