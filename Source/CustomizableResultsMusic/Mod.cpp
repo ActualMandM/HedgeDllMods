@@ -13,6 +13,7 @@ void ResultsDuration(float duration)
 #if _DEBUG
 	printf("[Custom Results Music] Set duration: %f\n", duration);
 #endif
+	// Special thanks to brianuuu for finding the address needed for adjusting the duration!
 	WRITE_MEMORY(0x17046C0, double, duration);
 }
 
