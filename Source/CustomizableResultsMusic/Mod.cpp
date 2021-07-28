@@ -17,6 +17,18 @@ void ResultsDuration(float duration)
 	WRITE_MEMORY(0x17046C0, double, duration);
 }
 
+void OnlySRankResult()
+{
+	WRITE_MEMORY(0xCFD4CA, uint8_t, 0xF8, 0x38);
+	WRITE_MEMORY(0xCFD4E8, uint8_t, 0xF8, 0x38);
+}
+
+void NoSRankResult()
+{
+	WRITE_MEMORY(0xCFD4CA, uint8_t, 0x00, 0x39);
+	WRITE_MEMORY(0xCFD4E8, uint8_t, 0x00, 0x39);
+}
+
 extern "C" __declspec(dllexport) void Init()
 {
 	Configuration::load("mod.ini");
@@ -44,4 +56,13 @@ extern "C" __declspec(dllexport) void Init()
 		ResultsDuration(11.0f);
 	else if (Configuration::songChoice != "")
 		SingleResults();
+}
+
+extern "C" __declspec(dllexport) void PostInit()
+{
+	if (Configuration::onlySRank)
+		OnlySRankResult();
+	else if (Configuration::noSRank)
+		NoSRankResult();
+
 }
