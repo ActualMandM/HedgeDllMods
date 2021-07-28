@@ -34,7 +34,7 @@ extern "C" __declspec(dllexport) void Init()
 	else if (Configuration::songChoice == "sound_sonic-2006")
 		ResultsDuration(7.381f);
 	else if (Configuration::songChoice == "sound_sonic-Unleashed")
-		ResultsDuration(6.1f);
+		ResultsDuration(6.021f);
 	else if (Configuration::songChoice == "sound_sonic-Colors")
 		ResultsDuration(8.01f);
 	else if (Configuration::songChoice == "sound_sonic-LostWorld")
