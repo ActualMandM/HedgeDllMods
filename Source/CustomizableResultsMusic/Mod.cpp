@@ -40,6 +40,8 @@ extern "C" __declspec(dllexport) void Init()
 		ResultsDuration(8.01f);
 	else if (Configuration::songChoice == "sound_sonic-LostWorld")
 		ResultsDuration(8.182f);
+	else if (Configuration::songChoice == "sound_sonic-BlackKnight")
+		ResultsDuration(11.0f);
 	else if (Configuration::songChoice != "")
 		SingleResults();
 }
