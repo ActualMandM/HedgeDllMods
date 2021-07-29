@@ -1,6 +1,6 @@
 #include "Configuration.h"
 
-string Configuration::songChoice = "sound_sonic-Classic";
+string Configuration::songChoice = "sound_Custom";
 float Configuration::customDuration = 6.1f;
 bool Configuration::customSingle = false;
 SRank Configuration::SRankType = SRank::Default;
