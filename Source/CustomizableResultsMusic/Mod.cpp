@@ -17,16 +17,18 @@ void ResultsDuration(float duration)
 	WRITE_MEMORY(0x17046C0, double, duration);
 }
 
-void OnlySRankResult()
+void SRankResult(SRank SRankOption)
 {
-	WRITE_MEMORY(0xCFD4CA, uint8_t, 0xF8, 0x38);
-	WRITE_MEMORY(0xCFD4E8, uint8_t, 0xF8, 0x38);
-}
-
-void NoSRankResult()
-{
-	WRITE_MEMORY(0xCFD4CA, uint8_t, 0x00, 0x39);
-	WRITE_MEMORY(0xCFD4E8, uint8_t, 0x00, 0x39);
+	if (SRankOption == Always)
+	{
+		WRITE_MEMORY(0xCFD4CA, uint8_t, 0xF8, 0x38);
+		WRITE_MEMORY(0xCFD4E8, uint8_t, 0xF8, 0x38);
+	}
+	else if (SRankOption == Never)
+	{
+		WRITE_MEMORY(0xCFD4CA, uint8_t, 0x00, 0x39);
+		WRITE_MEMORY(0xCFD4E8, uint8_t, 0x00, 0x39);
+	}
 }
 
 extern "C" __declspec(dllexport) void Init()
@@ -37,14 +39,7 @@ extern "C" __declspec(dllexport) void Init()
 	printf("[Custom Results Music] Current directory: %s\n", Configuration::songChoice.c_str());
 #endif
 
-	if (Configuration::songChoice == "sound_Custom")
-	{
-		if (Configuration::customSingle)
-			SingleResults();
-		else
-			ResultsDuration(Configuration::customDuration);
-	}
-	else if (Configuration::songChoice == "sound_sonic-2006")
+	if (Configuration::songChoice == "sound_sonic-2006")
 		ResultsDuration(7.381f);
 	else if (Configuration::songChoice == "sound_sonic-Unleashed")
 		ResultsDuration(6.021f);
@@ -53,16 +48,20 @@ extern "C" __declspec(dllexport) void Init()
 	else if (Configuration::songChoice == "sound_sonic-LostWorld")
 		ResultsDuration(8.182f);
 	else if (Configuration::songChoice == "sound_sonic-BlackKnight")
-		ResultsDuration(11.0f);
-	else if (Configuration::songChoice != "")
+		ResultsDuration(10.0f);
+	else if (Configuration::songChoice != "" && Configuration::songChoice != "sound_Custom")
 		SingleResults();
-}
 
-extern "C" __declspec(dllexport) void PostInit()
-{
-	if (Configuration::onlySRank)
-		OnlySRankResult();
-	else if (Configuration::noSRank)
-		NoSRankResult();
+	// Not possible until I can modify two ini files via HMM ConfigSchema
+	//Configuration::load("config.ini");
 
+	if (Configuration::songChoice == "sound_Custom")
+	{
+		if (Configuration::customSingle)
+			SingleResults();
+		else
+			ResultsDuration(Configuration::customDuration);
+	}
+
+	SRankResult(Configuration::SRankType);
 }
