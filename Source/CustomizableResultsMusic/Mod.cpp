@@ -97,7 +97,8 @@ extern "C" __declspec(dllexport) void Init()
 {
 	Configuration::load("mod.ini");
 
-	switch (Configuration::ResultOption)
+	/*
+	switch (Configuration::ResultOptionModern)
 	{
 		case S06:
 		case S06Town:
@@ -111,7 +112,7 @@ extern "C" __declspec(dllexport) void Init()
 		case ColorsBoss:
 			RoundClearDuration(8.01f);
 			break;
-		case SLW:
+		case LostWorld:
 			RoundClearDuration(8.182f);
 			break;
 		case BlackKnight:
@@ -121,6 +122,7 @@ extern "C" __declspec(dllexport) void Init()
 			RoundClearDuration(Configuration::CustomDuration);
 			break;
 	}
+	*/
 
 	WRITE_JUMP(0x00CFD3C8, CustomActClear);
 	WRITE_JUMP(0x00CFD55E, CustomResultsTime);

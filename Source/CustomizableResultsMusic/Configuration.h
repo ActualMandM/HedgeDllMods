@@ -3,16 +3,16 @@
 enum Results
 {
 	Custom,
-	Classic,
+	Sonic1,
 	SCDJP,
 	SCDUS,
 	S3K,
 	SonicR,
-	SA1,
-	SA2,
+	Adventure,
+	Adventure2,
 	Shadow,
-	S06,
-	S06Town,
+	Sonic06,
+	Sonic06Town,
 	SecretRings,
 	Unleashed,
 	UnleashedBoss,
@@ -21,11 +21,11 @@ enum Results
 	Colors,
 	ColorsBoss,
 	S4E2,
-	SLW,
+	LostWorld,
 	Mania,
 	Forces,
 	SRB2,
-	Persona1,
+	Persona,
 	Persona2IS,
 	Persona2EP,
 	Persona3,
@@ -43,7 +43,8 @@ enum SRank
 class Configuration
 {
 	public:
-		static Results ResultOption;
+		static Results ResultOptionClassic;
+		static Results ResultOptionModern;
 		static SRank SRankType;
 		static bool OnlyRoundClear;
 		static float CustomDuration;
