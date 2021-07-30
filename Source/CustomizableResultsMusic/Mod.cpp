@@ -261,14 +261,14 @@ void PrepareStrings(Results resultC, Results resultM)
 	
 	switch (Configuration::SRankType)
 	{
-	case Always:
-		strcpy(result2StringC, resultClassic < 0 ? "Result1" : ("R1_" + std::string(resultsTypeC)).c_str());
-		strcpy(result2StringM, resultModern  < 0 ? "Result1" : ("R1_" + std::string(resultsTypeM)).c_str());
-		break;
-	case Never:
-		strcpy(result1StringC, resultClassic < 0 ? "Result2" : ("R2_" + std::string(resultsTypeC)).c_str());
-		strcpy(result1StringM, resultModern  < 0 ? "Result2" : ("R2_" + std::string(resultsTypeM)).c_str());
-		break;
+		case Always:
+			strcpy(result2StringC, resultClassic < 0 ? "Result1" : ("R1_" + std::string(resultsTypeC)).c_str());
+			strcpy(result2StringM, resultModern  < 0 ? "Result1" : ("R1_" + std::string(resultsTypeM)).c_str());
+			break;
+		case Never:
+			strcpy(result1StringC, resultClassic < 0 ? "Result2" : ("R2_" + std::string(resultsTypeC)).c_str());
+			strcpy(result1StringM, resultModern  < 0 ? "Result2" : ("R2_" + std::string(resultsTypeM)).c_str());
+			break;
 	}
 }
 
@@ -288,7 +288,7 @@ extern "C" __declspec(dllexport) void PostInit()
 	const Results resultC = Configuration::ResultOptionClassic;
 	const Results resultM = Configuration::ResultOptionModern;
 
- 	PrepareStrings(resultC, resultM);
+	PrepareStrings(resultC, resultM);
 
 	resultTimeC = SetResultTime(resultC);
 	resultTimeM = SetResultTime(resultM);
