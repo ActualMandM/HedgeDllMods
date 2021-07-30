@@ -15,11 +15,11 @@ bool Configuration::load(const std::string& filePath)
 	if (reader.ParseError() != 0)
 		return false;
 
-	ResultOptionClassic = (Results)reader.GetInteger("Config", "ResultOption", ResultOptionClassic);
-	ResultOptionModern = (Results)reader.GetInteger("Config", "ResultOption", ResultOptionModern);
-	SRankType = (SRank)reader.GetInteger("Config", "SRankType", SRankType);
-	OnlyRoundClear = reader.GetBoolean("Config", "OnlyRoundClear", OnlyRoundClear);
-	CustomDuration = reader.GetFloat("Config", "customDuration", CustomDuration);
+    ResultOptionClassic = (Results)reader.GetInteger("Config", "ResultOptionClassic", ResultOptionClassic);
+    ResultOptionModern = (Results)reader.GetInteger("Config", "ResultOptionModern", ResultOptionModern);
+    SRankType = (SRank)reader.GetInteger("Config", "SRankType", SRankType);
+    OnlyRoundClear = reader.GetBoolean("Config", "OnlyRoundClear", OnlyRoundClear);
+    CustomDuration = reader.GetFloat("Config", "customDuration", CustomDuration);
 
 	return true;
 }
