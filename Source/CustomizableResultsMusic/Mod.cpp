@@ -203,33 +203,37 @@ double SetResultTime(Results result)
 	
 	switch (result)
 	{
-	case Sonic06:
-	case Sonic06Town:
-		outValue = 7.381;
-		break;
-	case Unleashed:
-	case UnleashedBoss:
-		outValue = 6.021;
-		break;
-	case Colors:
-	case ColorsBoss:
-		outValue = 8.01;
-		break;
-	case LostWorld:
-		outValue = 8.182;
-		break;
-	case BlackKnight:
-		outValue = 10.0;
-		break;
-	case Custom:
-		outValue = (double)Configuration::CustomDuration;
-		if (Configuration::OnlyRoundClear) OnlyRoundClear();
-		break;
-	default:
-		if(static_cast<int>(result) >= 0) OnlyRoundClear();
-		outValue = *(double*)0x017046C0;
-		break;
+		case Sonic06:
+		case Sonic06Town:
+			outValue = 7.381;
+			break;
+		case Unleashed:
+		case UnleashedBoss:
+			outValue = 6.021;
+			break;
+		case Colors:
+		case ColorsBoss:
+			outValue = 8.01;
+			break;
+		case LostWorld:
+			outValue = 8.182;
+			break;
+		case BlackKnight:
+			outValue = 10.0;
+			break;
+		case Custom:
+			outValue = (double)Configuration::CustomDuration;
+			if (Configuration::OnlyRoundClear) OnlyRoundClear();
+			break;
+		default:
+			if(static_cast<int>(result) >= 0) OnlyRoundClear();
+			outValue = *(double*)0x017046C0;
+			break;
 	}
+
+#if _DEBUG
+	printf("[Custom Results Music] Result duration set to %f\n", outValue);
+#endif
 	
 	return outValue;
 }
@@ -238,6 +242,11 @@ void PrepareStrings(Results resultC, Results resultM)
 {
 	int resultClassic = (int)resultC;
 	int resultModern  = (int)resultM;
+
+#if _DEBUG
+	printf("[Custom Results Music] Classic results: %i\n", resultClassic);
+	printf("[Custom Results Music] Modern results: %i\n", resultModern);
+#endif
 
 	const char* resultsTypeC = resultClassic < 0 ? "" : ResultsChar[resultClassic];
 	const char* resultsTypeM = resultModern  < 0 ? "" : ResultsChar[resultModern ];

@@ -8,6 +8,9 @@ float Configuration::CustomDuration = 6.1f;
 
 bool Configuration::load(const std::string& filePath)
 {
+#if _DEBUG
+	printf("[Custom Results Music] Loaded ini file: %s\n", filePath.c_str());
+#endif
 	const INIReader reader(filePath);
 	if (reader.ParseError() != 0)
 		return false;
