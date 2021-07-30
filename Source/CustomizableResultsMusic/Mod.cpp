@@ -93,20 +93,6 @@ void RoundClearDuration(float duration)
 	WRITE_MEMORY(0x17046C0, double, duration);
 }
 
-void SRankResult(SRank Option)
-{
-	if (Option == Always)
-	{
-		WRITE_MEMORY(0xCFD4CA, uint8_t, 0xF8, 0x38);
-		WRITE_MEMORY(0xCFD4E8, uint8_t, 0xF8, 0x38);
-	}
-	else if (Option == Never)
-	{
-		WRITE_MEMORY(0xCFD4CA, uint8_t, 0x00, 0x39);
-		WRITE_MEMORY(0xCFD4E8, uint8_t, 0x00, 0x39);
-	}
-}
-
 extern "C" __declspec(dllexport) void Init()
 {
 	Configuration::load("mod.ini");
@@ -138,6 +124,4 @@ extern "C" __declspec(dllexport) void Init()
 
 	WRITE_JUMP(0x00CFD3C8, CustomActClear);
 	WRITE_JUMP(0x00CFD55E, CustomResultsTime);
-
-	SRankResult(Configuration::SRankType);
 }
