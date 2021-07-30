@@ -1,9 +1,9 @@
 #include "Configuration.h"
 
-string Configuration::songChoice = "sound_Custom";
-float Configuration::customDuration = 6.1f;
-bool Configuration::customSingle = false;
+Results Configuration::ResultOption = Results::Custom;
 SRank Configuration::SRankType = SRank::Default;
+bool Configuration::OnlyRoundClear = false;
+float Configuration::CustomDuration = 6.1f;
 
 bool Configuration::load(const std::string& filePath)
 {
@@ -14,10 +14,10 @@ bool Configuration::load(const std::string& filePath)
 	if (reader.ParseError() != 0)
 		return false;
 
-	songChoice = reader.Get("Main", "IncludeDir0", songChoice);
-	customDuration = reader.GetFloat("Config", "customDuration", customDuration);
-	customSingle = reader.GetBoolean("Config", "customSingle", customSingle);
+	ResultOption = (Results)reader.GetInteger("Config", "ResultOption", ResultOption);
 	SRankType = (SRank)reader.GetInteger("Config", "SRankType", SRankType);
+	OnlyRoundClear = reader.GetBoolean("Config", "OnlyRoundClear", OnlyRoundClear);
+	CustomDuration = reader.GetFloat("Config", "customDuration", CustomDuration);
 
 	return true;
 }
