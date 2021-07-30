@@ -197,15 +197,6 @@ void OnlyRoundClear()
 	WRITE_MEMORY(0xCFD47F, uint8_t, 0xE9, 0x95, 0x00, 0x00, 0x00, 0xC3, 0x90, 0x90, 0x90);
 }
 
-void RoundClearDuration(float duration)
-{
-#if _DEBUG
-	printf("[Custom Results Music] Set duration: %f\n", duration);
-#endif
-	// Special thanks to brianuuu for finding the address needed for adjusting the duration!
-	WRITE_MEMORY(0x17046C0, double, duration);
-}
-
 double SetResultTime(Results result)
 {
 	double outValue;
@@ -275,7 +266,6 @@ void PrepareStrings(Results resultC, Results resultM)
 extern "C" __declspec(dllexport) void Init()
 {
 	//MessageBoxA(NULL, "ALT + SHIFT + P \n(or CTRL+ALT+P on new launch)", "Attach to VS", MB_ICONWARNING);
-	//Configuration::load("mod.ini");
 	Configuration::load("CRM.ini");
 
 	WRITE_JUMP(0x00CFD3C8, CustomActClear)
