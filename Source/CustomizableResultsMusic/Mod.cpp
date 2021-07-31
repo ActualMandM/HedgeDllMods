@@ -281,9 +281,11 @@ double SetResultTime(Results result, bool isModernSonic)
 			outValue = 10.0;
 			break;
 		case Custom:
+			if (Configuration::CustomOnlyRC)  OnlyRoundClear(isModernSonic);
 			outValue = (double)Configuration::CustomDuration;
 			break;
 		case Custom2:
+			if (Configuration::Custom2OnlyRC) OnlyRoundClear(isModernSonic);
 			outValue = (double)Configuration::Custom2Duration;
 			break;
 		default:
