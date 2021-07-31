@@ -30,7 +30,10 @@ enum Results
 	Persona2EP,
 	Persona3,
 	Persona4,
-	Persona5
+	Persona5,
+	Custom2,
+	Rush,
+	RushAdventure
 };
 
 enum SRank
@@ -47,7 +50,8 @@ class Configuration
 		static Results ResultOptionModern;
 		static SRank SRankType;
 		static bool OnlyRoundClear;
-		static float CustomDuration;
+		static float Custom1Duration;
+		static float Custom2Duration;
 
 		static bool load(const std::string& filePath);
 };

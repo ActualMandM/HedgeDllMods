@@ -34,7 +34,10 @@ const char* ResultsChar[] =
 	"Persona2EP",
 	"Persona3",
 	"Persona4",
-	"Persona5"
+	"Persona5",
+	"Custom2",
+	"Rush",
+	"RushAdventure"
 };
 
 // This lets Classic have a different song than Modern
@@ -278,7 +281,10 @@ double SetResultTime(Results result, bool isModernSonic)
 			outValue = 10.0;
 			break;
 		case Custom:
-			outValue = (double)Configuration::CustomDuration;
+			outValue = (double)Configuration::Custom1Duration;
+			break;
+		case Custom2:
+			outValue = (double)Configuration::Custom2Duration;
 			break;
 		default:
 			if(static_cast<int>(result) >= 0) OnlyRoundClear(isModernSonic);

@@ -4,7 +4,8 @@ Results Configuration::ResultOptionClassic = Results::Custom;
 Results Configuration::ResultOptionModern = Results::Custom;
 SRank Configuration::SRankType = SRank::Default;
 bool Configuration::OnlyRoundClear = false;
-float Configuration::CustomDuration = 6.1f;
+float Configuration::Custom1Duration = 6.1f;
+float Configuration::Custom2Duration = 6.1f;
 
 bool Configuration::load(const std::string& filePath)
 {
@@ -19,7 +20,8 @@ bool Configuration::load(const std::string& filePath)
     ResultOptionModern = (Results)reader.GetInteger("Config", "ResultOptionModern", ResultOptionModern);
     SRankType = (SRank)reader.GetInteger("Config", "SRankType", SRankType);
     OnlyRoundClear = reader.GetBoolean("Config", "OnlyRoundClear", OnlyRoundClear);
-    CustomDuration = reader.GetFloat("Config", "customDuration", CustomDuration);
+    Custom1Duration = reader.GetFloat("Config", "custom1Duration", Custom1Duration);
+    Custom2Duration = reader.GetFloat("Config", "custom2Duration", Custom2Duration);
 
 	return true;
 }
