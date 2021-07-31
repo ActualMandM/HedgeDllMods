@@ -50,7 +50,9 @@ class Configuration
 		static Results ResultOptionModern;
 		static SRank SRankType;
 		static bool OnlyRoundClear;
-		static float Custom1Duration;
+		static bool CustomOnlyRC;
+		static float CustomDuration;
+		static bool Custom2OnlyRC;
 		static float Custom2Duration;
 
 		static bool load(const std::string& filePath);

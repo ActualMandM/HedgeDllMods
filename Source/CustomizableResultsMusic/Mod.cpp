@@ -281,7 +281,7 @@ double SetResultTime(Results result, bool isModernSonic)
 			outValue = 10.0;
 			break;
 		case Custom:
-			outValue = (double)Configuration::Custom1Duration;
+			outValue = (double)Configuration::CustomDuration;
 			break;
 		case Custom2:
 			outValue = (double)Configuration::Custom2Duration;
