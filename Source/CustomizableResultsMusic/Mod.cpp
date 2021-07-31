@@ -189,15 +189,71 @@ ASMHOOK CustomResultsTime()
 	}
 }
 
-void OnlyRoundClear()
+uint32_t roundClearJumpReturnAddr = 0x00CFD488;
+uint32_t roundClearJumpOutAddr    = 0x00CFD519;
+
+bool resultOnlyM = false;
+bool resultOnlyC = false;
+
+ASMHOOK RoundClearJump()
 {
-#if _DEBUG
-	printf("[Custom Results Music] Round Clear will only play\n");
-#endif
-	WRITE_MEMORY(0xCFD47F, uint8_t, 0xE9, 0x95, 0x00, 0x00, 0x00, 0xC3, 0x90, 0x90, 0x90);
+	__asm
+	{
+		// boilerplate
+		and eax, 0FFh
+
+		push eax            // We need eax for later, so store it. 
+
+		mov eax, 0x01E5E304 // Classic sonic singleton, is 0 if modern sonic.
+		cmp[eax], 0
+		pop eax
+		jne compareClassic
+
+		push eax            // Second pass, just in case.
+		
+		mov eax, 0x01E5E2F8 // Modern sonic singleton, is 0 if classic sonic.
+		cmp[eax], 0
+		pop eax
+		jz compareClassic
+
+		// Modern comparison
+		cmp resultOnlyM, 1
+		jz jump              // If we're Modern sonic w/ Result Only set, jump out and skip comparison.
+		jmp compareOriginal  // Otherwise, do our original comparison.
+
+		// Classic comparison
+		compareClassic:
+		cmp resultOnlyC, 1
+		jz jump              // If we're Classic sonic w/ Result Only set, jump out and skip comparison.
+		jmp compareOriginal  // Otherwise, do our original comparison.
+
+
+		// Original comparison
+		compareOriginal:
+		cmp eax, 1Ah
+		ja jump
+
+		// If all checks fail, continue with result code.
+		jmp [roundClearJumpReturnAddr]
+
+		jump:
+		jmp [roundClearJumpOutAddr]
+	}
 }
 
-double SetResultTime(Results result)
+void OnlyRoundClear(bool isModernSonic)
+{
+	if (Configuration::OnlyRoundClear) return;
+
+#if _DEBUG
+	printf("[Custom Results Music] Round Clear will only play for %s Sonic\n", isModernSonic ? "Modern" : "Classic");
+#endif
+
+	if (isModernSonic) resultOnlyM = true;
+	else               resultOnlyC = true;
+}
+
+double SetResultTime(Results result, bool isModernSonic)
 {
 	double outValue;
 	
@@ -223,10 +279,9 @@ double SetResultTime(Results result)
 			break;
 		case Custom:
 			outValue = (double)Configuration::CustomDuration;
-			if (Configuration::OnlyRoundClear) OnlyRoundClear();
 			break;
 		default:
-			if(static_cast<int>(result) >= 0) OnlyRoundClear();
+			if(static_cast<int>(result) >= 0) OnlyRoundClear(isModernSonic);
 			outValue = *(double*)0x017046C0;
 			break;
 	}
@@ -281,6 +336,20 @@ extern "C" __declspec(dllexport) void Init()
 	WRITE_JUMP(0x00CFD4C9, CustomResult1)
 	WRITE_JUMP(0x00CFD4E7, CustomResult2)
 	WRITE_JUMP(0x00CFD55E, CustomResultsTime)
+
+	if (Configuration::OnlyRoundClear)
+	{
+		printf("[Custom Results Music] Only Round Clear will play");
+		// Changes former to latter:
+		// cmp eax, 0x1A
+		// jmp [0x00CFD519] -- ret -- nop x3
+		WRITE_MEMORY(0xCFD47F, uint8_t, 0xE9, 0x95, 0x00, 0x00, 0x00, 0xC3, 0x90, 0x90, 0x90);
+	}
+	else
+	{
+		// If we aren't forcing round clear, let's instead do classic/modern conditional changing.
+		WRITE_JUMP(0x00CFD47A, RoundClearJump)
+	}
 }
 
 extern "C" __declspec(dllexport) void PostInit()
@@ -290,6 +359,6 @@ extern "C" __declspec(dllexport) void PostInit()
 
 	PrepareStrings(resultC, resultM);
 
-	resultTimeC = SetResultTime(resultC);
-	resultTimeM = SetResultTime(resultM);
+	resultTimeC = SetResultTime(resultC, false);
+	resultTimeM = SetResultTime(resultM, true);
 }
