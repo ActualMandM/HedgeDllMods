@@ -337,8 +337,11 @@ void PrepareStrings(Results resultC, Results resultM)
 
 extern "C" __declspec(dllexport) void Init()
 {
-	//MessageBoxA(NULL, "ALT + SHIFT + P \n(or CTRL+ALT+P on new launch)", "Attach to VS", MB_ICONWARNING);
-	Configuration::load("CRM.ini");
+	if (!Configuration::load("CRM.ini"))
+	{
+		MessageBox(nullptr, TEXT("Failed to load CRM.ini!\nPlease configure the mod via HedgeModManager's Configure Mod option."), TEXT("Customizable Results Music"), MB_ICONERROR);
+		exit(-1);
+	}
 
 	WRITE_JUMP(0x00CFD3C8, CustomActClear)
 	WRITE_JUMP(0x00CFD4C9, CustomResult1)
