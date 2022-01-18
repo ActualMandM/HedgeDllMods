@@ -13,6 +13,8 @@ class Configuration
 {
 	public:
 		static TunicType tunicType;
+
+		static bool slwEyes;
 	
 		static bool load(const std::string& filePath);
 };
