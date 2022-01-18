@@ -6,7 +6,10 @@ enum TunicType
 	Red,
 	Blue,
 	Purple,
-	Rainbow
+	Rainbow,
+	Slash,
+	Bash,
+	Foof
 };
 
 class Configuration

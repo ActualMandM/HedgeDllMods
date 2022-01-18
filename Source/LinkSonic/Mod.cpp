@@ -2,6 +2,8 @@
 #include "Configuration.h"
 #include "ShaderLoader.h"
 
+static const char* tunicNames[] = { "Green", "Red", "Blue", "Purple", "Rainbow", "Slash", "Bash", "Foof" };
+
 extern "C" __declspec(dllexport) void Init()
 {
 	// Disable Title Loading Video by HyperBE32
@@ -19,26 +21,10 @@ extern "C" __declspec(dllexport) void Init()
 	}
 
 	// TunicType configuration
-	switch (Configuration::tunicType)
-	{
-		default:
-		// Green
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceGreen", { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
-			break;
-		case Red:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceRed", { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
-			break;
-		case Blue:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceBlue", { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
-			break;
-		case Purple:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearancePurple", { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
-			break;
-		case Rainbow:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceRainbow", { "LinkSonic", "LinkSonicEGB" }));
-			break;
-	}
-
+	if (Configuration::tunicType != Rainbow)
+		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("Appearance" + std::string(tunicNames[Configuration::tunicType]), { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
+	else
+		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceRainbow", {"LinkSonic", "LinkSonicEGB"}));
 }
 
 extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
