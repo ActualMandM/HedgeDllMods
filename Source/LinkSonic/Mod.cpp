@@ -1,6 +1,5 @@
 #include "ArchiveTreePatcher.h"
 #include "Configuration.h"
-#include "ShaderLoader.h"
 
 static const char* tunicNames[] = { "Green", "Red", "Blue", "Purple", "Rainbow", "Slash", "Bash", "Foof", "Gray", "Pink", "Orange", "Black", "LightBlue" };
 
@@ -12,13 +11,6 @@ extern "C" __declspec(dllexport) void Init()
 	// check if the configuration file exists
 	if (!Configuration::load("LinkSonic.ini"))
 		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that LinkSonic.ini exists in the mod's folder."), TEXT("Link Sonic"), MB_ICONERROR);
-
-	// only load ChrEye shaders if slwEyes are enabled
-	if (Configuration::slwEyes)
-	{
-		ShaderLoader::applyPatches();
-		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SLWEyes", { "LinkSonic", "LinkSonicEGB" }));
-	}
 
 	// TunicType configuration
 	if (Configuration::tunicType != Rainbow)
