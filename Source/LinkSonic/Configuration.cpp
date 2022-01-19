@@ -6,6 +6,7 @@ bool Configuration::slwEyes = true;
 bool Configuration::load(const std::string& filePath)
 {
 	const INIReader reader(filePath);
+
 	if (reader.ParseError() != 0)
 		return false;
 

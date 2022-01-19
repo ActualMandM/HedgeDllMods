@@ -2,7 +2,7 @@
 #include "Configuration.h"
 #include "ShaderLoader.h"
 
-static const char* tunicNames[] = { "Green", "Red", "Blue", "Purple", "Rainbow", "Slash", "Bash", "Foof" };
+static const char* tunicNames[] = { "Green", "Red", "Blue", "Purple", "Rainbow", "Slash", "Bash", "Foof", "Gray", "Pink", "Orange", "Black", "LightBlue" };
 
 extern "C" __declspec(dllexport) void Init()
 {
