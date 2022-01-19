@@ -11,7 +11,7 @@ bool Configuration::load(const std::string& filePath)
 		return false;
 
 	tunicType = (TunicType)reader.GetInteger("Appearance", "TunicType", TunicType::Green);
-	slwEyes = reader.GetBoolean("Appearance", "SLWEyes", slwEyes);
+	slwEyes = reader.GetBoolean("Appearance", "SLWEyes", true);
 
 	return true;
 }
