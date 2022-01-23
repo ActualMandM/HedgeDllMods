@@ -25,7 +25,12 @@ extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
 	for (Mod* mod : *mods->ModList)
 	{
 		if (!_stricmp(mod->Name, "eggmanland"))
+		{
 			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("LinkSonicEGB", { "cpz200" }));
+
+			if (GetModuleHandle(TEXT("SLWEyes.dll")) != nullptr)
+				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SLWEyes", { "LinkSonicEGB" }));
+		}
 	}
 
 	ArchiveTreePatcher::applyPatches();
