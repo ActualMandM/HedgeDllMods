@@ -45,7 +45,7 @@ const char* ResultsChar[] =
 char resultStringM[32];
 char resultStringC[32];
 
-uint32_t cac_jump = 0x00CFD3CD;
+static void* cac_jump = (void*)0x00CFD3CD;
 
 ASMHOOK CustomActClear()
 {
@@ -93,7 +93,7 @@ void SRankResult(SRank Option)
 char result1StringM[32];
 char result1StringC[32];
 
-uint32_t cr1_jump = 0x00CFD4CE;
+static void* cr1_jump = (void*)0x00CFD4CE;
 
 ASMHOOK CustomResult1()
 {
@@ -125,7 +125,7 @@ ASMHOOK CustomResult1()
 char result2StringM[32];
 char result2StringC[32];
 
-uint32_t cr2_jump = 0x00CFD4EC;
+static void* cr2_jump = (void*)0x00CFD4EC;
 
 ASMHOOK CustomResult2()
 {
@@ -158,7 +158,7 @@ ASMHOOK CustomResult2()
 double   resultTimeM = 6.099999904632568;  // Modern  music result time, default at 0x017046C0
 double   resultTimeC = 7.200000000000000;  // Classic music result time
 
-uint32_t resultTimeJumpOut = 0x00CFD566;
+static void* resultTimeJumpOut = (void*)0x00CFD566;
 
 ASMHOOK CustomResultsTime()
 {
@@ -192,8 +192,8 @@ ASMHOOK CustomResultsTime()
 	}
 }
 
-uint32_t roundClearJumpReturnAddr = 0x00CFD488;
-uint32_t roundClearJumpOutAddr    = 0x00CFD519;
+static void* roundClearJumpReturnAddr = (void*)0x00CFD488;
+static void* roundClearJumpOutAddr    = (void*)0x00CFD519;
 
 bool resultOnlyM = false;
 bool resultOnlyC = false;
