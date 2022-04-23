@@ -33,7 +33,8 @@ enum Results
 	Persona5,
 	Custom2,
 	Rush,
-	RushAdventure
+	RushAdventure,
+	ColorsSim
 };
 
 enum SRank

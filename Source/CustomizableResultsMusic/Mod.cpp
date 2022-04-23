@@ -37,7 +37,8 @@ const char* ResultsChar[] =
 	"Persona5",
 	"Custom2",
 	"Rush",
-	"RushAdventure"
+	"RushAdventure",
+	"ColorsSim"
 };
 
 // This lets Classic have a different song than Modern
@@ -272,6 +273,7 @@ double SetResultTime(Results result, bool isModernSonic)
 			break;
 		case Colors:
 		case ColorsBoss:
+		case ColorsSim:
 			outValue = 8.01;
 			break;
 		case LostWorld:
