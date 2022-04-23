@@ -10,13 +10,14 @@ extern "C" __declspec(dllexport) void Init()
 
 	// check if the configuration file exists
 	if (!Configuration::load("LinkSonic.ini"))
-		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that LinkSonic.ini exists in the mod's folder."), TEXT("Link Sonic"), MB_ICONERROR);
+	{
+		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that LinkSonic.ini exists in the mod's folder."),
+			TEXT("Link Sonic"), MB_ICONERROR);
+	}
 
 	// TunicType configuration
-	if (Configuration::tunicType != Rainbow)
-		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("Appearance" + std::string(tunicNames[Configuration::tunicType]), { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
-	else
-		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("AppearanceRainbow", {"LinkSonic", "LinkSonicEGB"}));
+	ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("Appearance"
+		+ std::string(tunicNames[Configuration::tunicType]), { "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
 }
 
 extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)

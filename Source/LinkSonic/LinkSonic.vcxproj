@@ -137,7 +137,7 @@
       <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <AdditionalIncludeDirectories>..\..\Include\BlueBlur;..\..\Dependencies;..\..\Dependencies\Detours\include;..\..\Dependencies\Loaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Dependencies;..\..\Dependencies\Detours\include;..\..\Dependencies\Loaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>Pch.h</ForcedIncludeFiles>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
