@@ -2,6 +2,8 @@
 #include "Configuration.h"
 
 vector<string> sonicArchives = { "Sonic", "Title", "ev031", "ev041", "ev042", "ev091", "evSonic" };
+static const char* costumeType[] = { "", "MetalGold", "MetalSilver", "Paint", "PolkaDot" };
+static const char* simColors[] = { "Blue", "Black", "Green", "Pink", "Red" };
 
 extern "C" __declspec(dllexport) void Init()
 {
@@ -10,35 +12,26 @@ extern "C" __declspec(dllexport) void Init()
 
 	// check if the configuration file exists
 	if (!Configuration::load("ColorsSonic.ini"))
-		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that ColorsSonic.ini exists in the mod's folder."), TEXT("Colors Sonic"), MB_ICONERROR);
+	{
+		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that ColorsSonic.ini exists in the mod's folder."),
+			TEXT("Colors Sonic"), MB_ICONERROR);
+	}
 
 	// CostumeType configuration
-	switch (Configuration::costumeType)
+	if (Configuration::costumeType != None)
 	{
-		case Gold:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("UltimateMetalGold", { sonicArchives }));
-			break;
-		case Silver:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("UltimateMetalSilver", { sonicArchives }));
-			break;
-		case Paint:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("UltimatePaint", { sonicArchives }));
-			break;
-		case PolkaDot:
-			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("UltimatePolkaDot", { sonicArchives }));
-			break;
-		default:
-			break;
+		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("Ultimate"
+			+ std::string(costumeType[Configuration::costumeType]), { sonicArchives }));
 	}
-	
+
 	// SimulatorType configuration
 	if (Configuration::enableSimulator)
 	{
 		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorSonic", { sonicArchives }));
 
 		// Simulator Animation Swap by HyperBE32
-		WRITE_MEMORY(0x15E6848, uint8_t, 0x73, 0x69, 0x6D, 0x5F, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5F, 0x77, 0x61, 0x69, 0x74, 0x5F, 0x61, 0x00); /* sim_start_wait_a */
-		WRITE_MEMORY(0x15E6859, uint8_t, 0x73, 0x69, 0x6D, 0x5F, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5F, 0x6E, 0x6F, 0x72, 0x6D, 0x61, 0x6C, 0x00); /* sim_start_normal */
+		WRITE_MEMORY(0x15E6848, const char, "sim_start_wait_a\0");
+		WRITE_MEMORY(0x15E6859, const char, "sim_start_normal\0");
 		WRITE_MEMORY(0x1277C75, uint32_t, 0x015E6848);
 		WRITE_MEMORY(0x1277C0E, uint32_t, 0x015E6859);
 
@@ -75,39 +68,24 @@ extern "C" __declspec(dllexport) void Init()
 		WRITE_MEMORY(0xDF0B63, uint32_t, 0xFFFFFF);  /* 3002_damage06 */
 		WRITE_MEMORY(0x11D72DC, uint32_t, 0xFFFFFF); /* 3002_action06 */
 		
-		switch (Configuration::simulatorType)
+		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("Simulator"
+			+ std::string(simColors[Configuration::simulatorType]), { "SimulatorSonic" }));
+
+		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocket"
+			+ std::string(simColors[Configuration::simulatorType]), { "PhantomRocket" }));
+
+		if (Configuration::simulatorType != Blue)
 		{
-			default:
-			// Blue
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorBlue", { "SimulatorSonic" }));
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocketBlue", { "PhantomRocket" }));
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommonBlue", { "SonicActionCommon" }));
-				break;
-			case Black:
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorBlack", { "SimulatorSonic" }));
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocketBlack", { "PhantomRocket" }));
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommonBlack", { "SonicActionCommon" }));
-				break;
-			case Green:
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorGreen", { "SimulatorSonic" }));
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocketGreen", { "PhantomRocket" }));
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommonGreen", { "SonicActionCommon" }));
-				break;
-			case Pink:
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorPink", { "SimulatorSonic" }));
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocketPink", { "PhantomRocket" }));
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommonPink", { "SonicActionCommon" }));
-				break;
-			case Red:
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRed", { "SimulatorSonic" }));
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorRocketRed", { "PhantomRocket" }));
-				ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommonRed", { "SonicActionCommon" }));
-				break;
+			ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorActionCommon"
+				+ std::string(simColors[Configuration::simulatorType]), { "SonicActionCommon" }));
 		}
 	}
-	// Inject Colors Sonic into event archives and title screen
 	else
-		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("ColorsSonic", { "Title", "ev031", "ev041", "ev042", "ev091", "evSonic" }));
+	{
+		// Inject Colors Sonic into event archives and title screen
+		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("ColorsSonic",
+			{ "Title", "ev031", "ev041", "ev042", "ev091", "evSonic" }));
+	}
 
 	ArchiveTreePatcher::applyPatches();
 }
