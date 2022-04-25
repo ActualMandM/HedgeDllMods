@@ -80,12 +80,9 @@ extern "C" __declspec(dllexport) void Init()
 				+ std::string(simColors[Configuration::simulatorType]), { "SonicActionCommon" }));
 		}
 	}
-	else
-	{
-		// Inject Colors Sonic into event archives and title screen
-		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("ColorsSonic",
-			{ "Title", "ev031", "ev041", "ev042", "ev091", "evSonic" }));
-	}
+	// Inject Colors Sonic into event archives and title screen
+	else if (!Configuration::enableGenerations)
+		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("ColorsSonic", { sonicArchives }));
 
 	ArchiveTreePatcher::applyPatches();
 }

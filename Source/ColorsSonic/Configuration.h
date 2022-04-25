@@ -22,6 +22,7 @@ class Configuration
 {
 	public:
 		static bool enableSimulator;
+		static bool enableGenerations;
 		static SimulatorType simulatorType;
 		static CostumeType costumeType;
 	
