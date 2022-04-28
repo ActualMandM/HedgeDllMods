@@ -7,15 +7,15 @@ static const char* simColors[] = { "Blue", "Black", "Green", "Pink", "Red" };
 
 extern "C" __declspec(dllexport) void Init()
 {
-	// Disable Title Loading Video by HyperBE32
-	WRITE_MEMORY(0xD6966E, uint8_t, 0xE9, 0x14, 0x01, 0x00, 0x00);
-
 	// check if the configuration file exists
 	if (!Configuration::load("ColorsSonic.ini"))
 	{
 		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that ColorsSonic.ini exists in the mod's folder."),
 			TEXT("Colors Sonic"), MB_ICONERROR);
 	}
+
+	// Disable Title Loading Video by HyperBE32
+	WRITE_MEMORY(0xD6966E, uint8_t, 0xE9, 0x14, 0x01, 0x00, 0x00);
 
 	// CostumeType configuration
 	if (Configuration::costumeType != None)
@@ -30,8 +30,8 @@ extern "C" __declspec(dllexport) void Init()
 		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("SimulatorSonic", { sonicArchives }));
 
 		// Simulator Animation Swap by HyperBE32
-		WRITE_MEMORY(0x15E6848, const char, "sim_start_wait_a\0");
-		WRITE_MEMORY(0x15E6859, const char, "sim_start_normal\0");
+		WRITE_MEMORY(0x15E6848, const char, "sim_start_wait_a");
+		WRITE_MEMORY(0x15E6859, const char, "sim_start_normal");
 		WRITE_MEMORY(0x1277C75, uint32_t, 0x015E6848);
 		WRITE_MEMORY(0x1277C0E, uint32_t, 0x015E6859);
 
@@ -80,9 +80,20 @@ extern "C" __declspec(dllexport) void Init()
 				+ std::string(simColors[Configuration::simulatorType]), { "SonicActionCommon" }));
 		}
 	}
-	// Inject Colors Sonic into event archives and title screen
+	// Inject Colors Sonic if Generations Sonic is disabled
 	else if (!Configuration::enableGenerations)
 		ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("ColorsSonic", { sonicArchives }));
 
 	ArchiveTreePatcher::applyPatches();
+}
+
+extern "C" __declspec(dllexport) void PostInit()
+{
+	// Original Results Animations
+	if (GetModuleHandle(TEXT("ColorsHUD.dll")) != nullptr)
+	{
+		// Switch to cn for results 00 and 01
+		WRITE_MEMORY(0x15E8DC0, uint8_t, 0x63);
+		WRITE_MEMORY(0x15E8DF0, uint8_t, 0x63);
+	}
 }
