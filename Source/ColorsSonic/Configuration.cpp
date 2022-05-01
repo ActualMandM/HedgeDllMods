@@ -1,7 +1,6 @@
 #include "Configuration.h"
 
-bool Configuration::enableSimulator = false;
-bool Configuration::enableGenerations = false;
+SonicType Configuration::sonicType = SonicType::Colors;
 SimulatorType Configuration::simulatorType = SimulatorType::Blue;
 CostumeType Configuration::costumeType = CostumeType::None;
 
@@ -11,8 +10,7 @@ bool Configuration::load(const std::string& filePath)
 	if (reader.ParseError() != 0)
 		return false;
 
-	enableSimulator = reader.GetBoolean("Appearance", "EnableSimulator", false);
-	enableGenerations = reader.GetBoolean("Appearance", "EnableGenerations", false);
+	sonicType = (SonicType)reader.GetInteger("Appearance", "SonicType", SonicType::Colors);
 	simulatorType = (SimulatorType)reader.GetInteger("Appearance", "SimulatorType", SimulatorType::Blue);
 	costumeType = (CostumeType)reader.GetInteger("Appearance", "CostumeType", CostumeType::None);
 

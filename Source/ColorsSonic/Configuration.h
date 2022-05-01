@@ -1,5 +1,13 @@
 #pragma once
 
+enum SonicType
+{
+	Colors,
+	Simulator,
+	Generations,
+	ColorsUltimate
+};
+
 enum SimulatorType
 {
 	Blue,
@@ -21,8 +29,7 @@ enum CostumeType
 class Configuration
 {
 	public:
-		static bool enableSimulator;
-		static bool enableGenerations;
+		static SonicType sonicType;
 		static SimulatorType simulatorType;
 		static CostumeType costumeType;
 	
