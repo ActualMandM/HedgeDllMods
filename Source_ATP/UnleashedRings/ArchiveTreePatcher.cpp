@@ -2,7 +2,7 @@
 
 const std::vector<std::pair<const char*, const std::vector<const char*>>> NODES =
 {
-	{ "PBRSonic", {"Sonic"}},
+	{ "UnleashedRings", { "cmn100", "cmn200" } },
 };
 
 HOOK(bool, __stdcall, ParseArchiveTree, 0xD4C8E0, void* A1, char* pData, const size_t size, void* pDatabase)
