@@ -82,3 +82,5 @@ const HMODULE MODULE_HANDLE = GetModuleHandle(nullptr);
             *((uint8_t*)(location) + i) = 0x90; \
         VirtualProtect((void*)(location), (size_t)(count), oldProtect, &oldProtect); \
     }
+
+#define ASMHOOK void __declspec(naked)

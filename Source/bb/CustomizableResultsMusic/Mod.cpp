@@ -1,9 +1,5 @@
 #include "Configuration.h"
 
-// Defined here so we don't need to re-write this all the time.
-#define ASMHOOK void __declspec(naked)
-
-
 const char* ResultsChar[] =
 {
 	"Custom",

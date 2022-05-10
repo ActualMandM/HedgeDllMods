@@ -1,6 +1,3 @@
-// Defined here so we don't need to re-write this all the time.
-#define ASMHOOK void __declspec(naked)
-
 uint32_t midAsmHookFunctionAddress = 0x6621A0;
 uint32_t midAsmHookReturnAddress = 0x74251B;
 
