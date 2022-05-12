@@ -86,3 +86,41 @@ const HMODULE MODULE_HANDLE = GetModuleHandle(nullptr);
     }
 
 #define ASMHOOK void __declspec(naked)
+
+// From brianuuu's Common.h (https://github.com/brianuuu/DllMods/blob/785b18899efc8824e769db904372da2660f97c1f/Dependencies/Common.h)
+namespace Helpers
+{
+	inline uint32_t GetMultiLevelAddress(uint32_t initAddress, std::vector<uint32_t> offsets)
+	{
+		uint32_t address = *(uint32_t*)initAddress;
+		for (uint32_t i = 0; i < offsets.size(); i++)
+		{
+			uint32_t const& offset = offsets[i];
+			address += offset;
+	
+			if (i < offsets.size() - 1)
+			{
+				address = *(uint32_t*)address;
+			}
+		}
+		return address;
+	}
+
+	inline bool CheckCurrentStage(char const* stageID)
+	{
+		char const* currentStageID = (char*)0x01E774D4;
+		return strcmp(currentStageID, stageID) == 0;
+	}
+
+	inline uint32_t GetCurrentStageID()
+	{
+		uint32_t stageIDAddress = GetMultiLevelAddress(0x1E66B34, { 0x4, 0x1B4, 0x80, 0x0 });
+		return *(uint32_t*)stageIDAddress;
+	}
+
+	inline bool IsCurrentStageMission()
+	{
+		uint32_t stageID = GetCurrentStageID();
+		return (stageID & 0xFF00) > 0 && (stageID & 0xFF) <= 0x11;
+	}
+}

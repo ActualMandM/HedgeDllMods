@@ -1,5 +1,7 @@
 #include "Configuration.h"
 
+bool bpcTransformed = false;
+
 HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPlayerSpeed* This, void* _, const hh::fnd::SUpdateInfo& updateInfo)
 {
 	// Update original function
@@ -16,18 +18,41 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	const float maxBoostAmount = context->GetMaxChaosEnergy();
 
 	// Booleans
+	const bool isBPC = Configuration::BPCSuper && Helpers::CheckCurrentStage("bpc");
 	const bool isSuper = context->StateFlag(eStateFlag_InvokeSuperSonic);
+	const bool isOutOfControl = context->StateFlag(eStateFlag_OutOfControl);
 	const bool isGoal = context->StateFlag(eStateFlag_Goal);
 	const bool isWisp = strstr(stateName.c_str(), "Rocket") || strstr(stateName.c_str(), "Spike");
 	const bool isTransforming = strstr(stateName.c_str(), "Transform");
 	const bool isGrinding = strstr(stateName.c_str(), "Grind");
 	const bool isDiving = strstr(stateName.c_str(), "Diving");
+	const bool isDead = strstr(stateName.c_str(), "Dead");
 	const bool isModern = *(uint8_t*)0x1E5E2F8 != 0 && *(uint8_t*)0x1E5E304 == 0;
 
 	// Check if the player can go super based on certain conditions
 	// TODO: Better way of checking whether or not the player can transform into super
 	const bool canSuper = ringCount >= 50;
-	const bool canTransform = !isGoal && !isWisp && !isTransforming && !isGrinding && !isDiving && stateName != "HangOn" && stateName != "ExternalControl" && !context->StateFlag(eStateFlag_OutOfControl);
+	const bool canTransform = !isOutOfControl && !isGoal && !isWisp && !isTransforming && !isGrinding && !isDiving && stateName != "HangOn" && stateName != "ExternalControl";
+
+	// Force Super Sonic in Perfect Chaos boss (unless disabled in config)
+	if (isBPC && !isOutOfControl)
+	{
+		if (!isSuper && !isTransforming && !bpcTransformed && !isDead)
+		{
+			ringCount = 50;
+			context->ChangeState("TransformSp");
+			bpcTransformed = true;
+		}
+		else if (ringCount == 0)
+			This->SendMessage(This->m_ActorID, boost::make_shared<Sonic::Message::MsgDead>(false));
+
+		if (isDead)
+			bpcTransformed = false;
+
+		return;
+	}
+	else if (bpcTransformed)
+		bpcTransformed = false;
 
 	// TODO: Check story progress and only allow super if the player has either collected all emeralds or beat the final boss
 	if (padState.IsTapped(Sonic::eKeyState_Y) && canTransform)
@@ -40,12 +65,13 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	}
 
 	// CONFIG: Go back to normal if the stage has been beat
-	// TODO: Maybe make it configurable between None, Classic Only, Modern Only, and Both
-	// TODO: Don't switch back to goal if player is in a mission
-	if (!Configuration::SuperSonicGoal && isGoal && isSuper)
+	// TODO: Make it configurable between None, Classic Only, Modern Only, and Both (default) once we can reliably detect Classic or Modern
+	if (!Configuration::SuperSonicGoal && isGoal && isSuper && !isBPC)
 	{
 		context->ChangeState("TransformStandard");
-		context->ChangeState("Goal"); // Immediately switch back to Goal (prevents softlock from goalring)
+
+		if (!Helpers::IsCurrentStageMission())
+			context->ChangeState("Goal"); // Immediately switch back to Goal (prevents softlock from goalring)
 	}
 
 	// Prevent Super Sonic from overfilling boost (this is overkill!)
@@ -53,11 +79,6 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 		boostAmount = std::clamp(boostAmount, 0.0f, maxBoostAmount);
 	
 	// TODO: Revert some animations being replaced by his floating anim
-
-	// TODO: Force Super Sonic in Perfect Chaos boss (unless in Hard Mode)
-	//       - Set rings to 50 at start of the stage
-	//       - Kill Sonic if he runs out of rings
-	//       - Make this togglable if the player doesn't want it
 
 #if _DEBUG
 	// Debug information (through Parameter Editor)
