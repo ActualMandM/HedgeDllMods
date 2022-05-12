@@ -11,25 +11,25 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	const auto& padState = Sonic::CInputState::GetInstance()->GetPadState();
 
 	// Ints and Floats
-	const auto ringCount = context->m_RingCount;
-	const auto boostAmount = context->m_ChaosEnergy;
-	const auto maxBoostAmount = context->GetMaxChaosEnergy();
+	uint32_t& ringCount = context->m_RingCount;
+	float& boostAmount = context->m_ChaosEnergy;
+	const float maxBoostAmount = context->GetMaxChaosEnergy();
 
 	// Booleans
-	const auto isSuper = context->StateFlag(eStateFlag_InvokeSuperSonic) == true;
-	const auto isGoal = context->StateFlag(eStateFlag_Goal) == true;
-	bool isWisp = strstr(stateName.c_str(), "Rocket") || strstr(stateName.c_str(), "Spike");
-	bool isTransforming = strstr(stateName.c_str(), "Transform");
-	bool isDamaged = strstr(stateName.c_str(), "Damage");
-	bool isGrinding = strstr(stateName.c_str(), "Grind");
-	bool isTricking = strstr(stateName.c_str(), "Trick");
-	bool isDiving = strstr(stateName.c_str(), "Diving");
-	bool isModern = *(int*)0x1E5E2F8 > 0 && *(int*)0x1E5E304 == 0;
+	const bool isSuper = context->StateFlag(eStateFlag_InvokeSuperSonic);
+	const bool isGoal = context->StateFlag(eStateFlag_Goal);
+	const bool isWisp = strstr(stateName.c_str(), "Rocket") || strstr(stateName.c_str(), "Spike");
+	const bool isTransforming = strstr(stateName.c_str(), "Transform");
+	const bool isDamaged = strstr(stateName.c_str(), "Damage");
+	const bool isGrinding = strstr(stateName.c_str(), "Grind");
+	const bool isTricking = strstr(stateName.c_str(), "Trick");
+	const bool isDiving = strstr(stateName.c_str(), "Diving");
+	const bool isModern = *(uint8_t*)0x1E5E2F8 != 0 && *(uint8_t*)0x1E5E304 == 0;
 
 	// Check if the player can go super based on certain conditions
 	// TODO: Better way of checking whether or not the player can transform into super
-	bool canSuper = ringCount >= 50;
-	bool canTransform = !isGoal && !isWisp && !isTransforming && !isDamaged && !isGrinding && !isTricking && !isDiving && stateName != "HangOn" && stateName != "ExternalControl";
+	const bool canSuper = ringCount >= 50;
+	const bool canTransform = !isGoal && !isWisp && !isTransforming && !isDamaged && !isGrinding && !isTricking && !isDiving && stateName != "HangOn" && stateName != "ExternalControl";
 
 	// TODO: Check story progress and only allow super if the player has either collected all emeralds or beat the final boss
 	if (padState.IsTapped(Sonic::eKeyState_Y) && canTransform)
@@ -49,9 +49,9 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 		context->ChangeState("Goal"); // Immediately switch back to Goal (prevents softlock from goalring)
 	}
 
-	// TODO: Prevent Super Sonic from overfilling boost (this is overkill!)
-	if (boostAmount > maxBoostAmount && isSuper)
-		DebugDrawText::log("Boost overfilled while super!");
+	// Prevent Super Sonic from overfilling boost (this is overkill!)
+	if (isSuper)
+		boostAmount = std::clamp(boostAmount, 0.0f, maxBoostAmount);
 	
 	// TODO: Revert some animations being replaced by his floating anim
 
@@ -66,6 +66,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	DebugDrawText::log(format("Can Go Super: %s", canSuper && canTransform ? "true" : "false"));
 	DebugDrawText::log(format("Super Sonic: %s", isSuper ? "true" : "false"));
 	DebugDrawText::log(format("Stage Beaten: %s", isGoal ? "true" : "false"));
+	DebugDrawText::log(format("Boost Amount: %.0f", boostAmount));
 }
 
 extern "C" __declspec(dllexport) void Init()

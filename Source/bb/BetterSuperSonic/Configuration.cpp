@@ -12,7 +12,7 @@ bool Configuration::load(const std::string& filePath)
 		return false;
 
 	SuperSonicGoal = (bool)reader.GetInteger("Main", "SuperSonicGoal", false);
-	SuperSonicToggle = (bool)reader.GetInteger("Main", "SuperSonicToggle", false);
+	SuperSonicToggle = (bool)reader.GetInteger("Main", "SuperSonicToggle", true);
 	SkillOnly = (bool)reader.GetInteger("Main", "SkillOnly", false);
 
 	return true;
