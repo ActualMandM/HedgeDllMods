@@ -20,16 +20,14 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	const bool isGoal = context->StateFlag(eStateFlag_Goal);
 	const bool isWisp = strstr(stateName.c_str(), "Rocket") || strstr(stateName.c_str(), "Spike");
 	const bool isTransforming = strstr(stateName.c_str(), "Transform");
-	const bool isDamaged = strstr(stateName.c_str(), "Damage");
 	const bool isGrinding = strstr(stateName.c_str(), "Grind");
-	const bool isTricking = strstr(stateName.c_str(), "Trick");
 	const bool isDiving = strstr(stateName.c_str(), "Diving");
 	const bool isModern = *(uint8_t*)0x1E5E2F8 != 0 && *(uint8_t*)0x1E5E304 == 0;
 
 	// Check if the player can go super based on certain conditions
 	// TODO: Better way of checking whether or not the player can transform into super
 	const bool canSuper = ringCount >= 50;
-	const bool canTransform = !isGoal && !isWisp && !isTransforming && !isDamaged && !isGrinding && !isTricking && !isDiving && stateName != "HangOn" && stateName != "ExternalControl";
+	const bool canTransform = !isGoal && !isWisp && !isTransforming && !isGrinding && !isDiving && stateName != "HangOn" && stateName != "ExternalControl" && !context->StateFlag(eStateFlag_OutOfControl);
 
 	// TODO: Check story progress and only allow super if the player has either collected all emeralds or beat the final boss
 	if (padState.IsTapped(Sonic::eKeyState_Y) && canTransform)
@@ -43,6 +41,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 
 	// CONFIG: Go back to normal if the stage has been beat
 	// TODO: Maybe make it configurable between None, Classic Only, Modern Only, and Both
+	// TODO: Don't switch back to goal if player is in a mission
 	if (!Configuration::SuperSonicGoal && isGoal && isSuper)
 	{
 		context->ChangeState("TransformStandard");
@@ -60,6 +59,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	//       - Kill Sonic if he runs out of rings
 	//       - Make this togglable if the player doesn't want it
 
+#if _DEBUG
 	// Debug information (through Parameter Editor)
 	DebugDrawText::log(format("%s Sonic", isModern ? "Modern" : "Classic"));
 	DebugDrawText::log(format("State Name: %s", stateName.c_str()));
@@ -67,6 +67,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	DebugDrawText::log(format("Super Sonic: %s", isSuper ? "true" : "false"));
 	DebugDrawText::log(format("Stage Beaten: %s", isGoal ? "true" : "false"));
 	DebugDrawText::log(format("Boost Amount: %.0f", boostAmount));
+#endif
 }
 
 extern "C" __declspec(dllexport) void Init()
