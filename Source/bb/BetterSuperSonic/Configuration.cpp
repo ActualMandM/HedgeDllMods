@@ -1,6 +1,8 @@
 #include "Configuration.h"
 
 bool Configuration::SuperSonicGoal = false;
+bool Configuration::SuperSonicToggle = true;
+bool Configuration::SkillOnly = false;
 
 bool Configuration::load(const std::string& filePath)
 {
@@ -10,6 +12,8 @@ bool Configuration::load(const std::string& filePath)
 		return false;
 
 	SuperSonicGoal = (bool)reader.GetInteger("Main", "SuperSonicGoal", false);
+	SuperSonicToggle = (bool)reader.GetInteger("Main", "SuperSonicToggle", false);
+	SkillOnly = (bool)reader.GetInteger("Main", "SkillOnly", false);
 
 	return true;
 }

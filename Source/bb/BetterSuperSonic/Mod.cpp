@@ -24,22 +24,25 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	bool isGrinding = strstr(stateName.c_str(), "Grind");
 	bool isTricking = strstr(stateName.c_str(), "Trick");
 	bool isDiving = strstr(stateName.c_str(), "Diving");
-	bool isModern = *(int*)0x01E5E2F8 > 0 && *(int*)0x01E5E304 == 0;
+	bool isModern = *(int*)0x1E5E2F8 > 0 && *(int*)0x1E5E304 == 0;
 
 	// Check if the player can go super based on certain conditions
+	// TODO: Better way of checking whether or not the player can transform into super
 	bool canSuper = ringCount >= 50;
 	bool canTransform = !isGoal && !isWisp && !isTransforming && !isDamaged && !isGrinding && !isTricking && !isDiving && stateName != "HangOn" && stateName != "ExternalControl";
 
 	// TODO: Check story progress and only allow super if the player has either collected all emeralds or beat the final boss
 	if (padState.IsTapped(Sonic::eKeyState_Y) && canTransform)
 	{
-		if (!isSuper && canSuper)
+		// TODO: Check whether or not the Super Sonic skill is equipped
+		if (!isSuper && canSuper && !Configuration::SkillOnly)
 			context->ChangeState("TransformSp");
-		else if (isSuper)
+		else if (isSuper && Configuration::SuperSonicToggle)
 			context->ChangeState("TransformStandard");
 	}
 
 	// CONFIG: Go back to normal if the stage has been beat
+	// TODO: Maybe make it configurable between None, Classic Only, Modern Only, and Both
 	if (!Configuration::SuperSonicGoal && isGoal && isSuper)
 	{
 		context->ChangeState("TransformStandard");
@@ -52,9 +55,10 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	
 	// TODO: Revert some animations being replaced by his floating anim
 
-	// TODO: Force Super Sonic in Perfect Chaos fight (unless Hard Mode)
+	// TODO: Force Super Sonic in Perfect Chaos boss (unless in Hard Mode)
 	//       - Set rings to 50 at start of the stage
 	//       - Kill Sonic if he runs out of rings
+	//       - Make this togglable if the player doesn't want it
 
 	// Debug information (through Parameter Editor)
 	DebugDrawText::log(format("%s Sonic", isModern ? "Modern" : "Classic"));
