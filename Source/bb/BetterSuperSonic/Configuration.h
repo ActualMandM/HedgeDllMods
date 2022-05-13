@@ -1,6 +1,6 @@
 #pragma once
 
-enum GoalType
+enum SonicCheck
 {
 	None,
 	Classic,
@@ -11,7 +11,9 @@ enum GoalType
 class Configuration
 {
 	public:
-		static GoalType goalType;
+		static SonicCheck goalType;
+		static SonicCheck superMusic;
+		static bool saveCheck;
 		static bool superSonicToggle;
 		static bool skillOnly;
 		static bool bpcSuper;

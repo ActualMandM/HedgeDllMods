@@ -4,6 +4,13 @@ bool bpcTransformed = false;
 
 HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPlayerSpeed* This, void* _, const hh::fnd::SUpdateInfo& updateInfo)
 {
+	// TODO: Check save file and only run this code if the player has beaten the final boss (Configuration::saveCheck)
+	//       - Hidden configuration option, set to false for the code to always execute
+
+	// TODO: Play invincibility/custom music when super if config is set to do so (Configuration::superMusic)
+	//       - This will more than likely require another hook to prevent spamming
+	//       - (multiple hooks is probably better for long term anyways lol)
+
 	// Contexts and States
 	const auto context = This->GetContext();
 	const auto stateName = This->m_StateMachine.GetCurrentState()->GetStateName();
@@ -31,58 +38,8 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	const bool canSuper = ringCount >= 50;
 	const bool canTransform = !isOutOfControl && !isGoal && !isWisp && !isTransforming && !isGrinding && !isDiving && stateName != "HangOn" && stateName != "ExternalControl";
 
-	// CONFIG: Super Sonic in Perfect Chaos boss
-	if (isBPC && !isOutOfControl)
-	{
-		if (!isSuper && !isTransforming && !bpcTransformed && !isDead)
-		{
-			ringCount = 50;
-			context->ChangeState("TransformSp");
-			bpcTransformed = true;
-		}
-		else if (ringCount == 0)
-			This->SendMessage(This->m_ActorID, boost::make_shared<Sonic::Message::MsgDead>(false));
-
-		if (isDead)
-			bpcTransformed = false;
-
-		// Update original function
-		originalCPlayerSpeedUpdateParallel(This, _, updateInfo);
-
-		return;
-	}
-	else if (bpcTransformed)
-		bpcTransformed = false;
-
-	// TODO: Check story progress and only allow super if the player has either collected all emeralds or beat the final boss
-	if (padState.IsTapped(Sonic::eKeyState_Y) && canTransform)
-	{
-		// TODO: Check whether or not the Super Sonic skill is equipped
-		if (!isSuper && canSuper && !Configuration::skillOnly)
-			context->ChangeState("TransformSp");
-		else if (isSuper && Configuration::superSonicToggle)
-			context->ChangeState("TransformStandard");
-	}
-
-	// CONFIG: Go back to normal if the stage has been beat
-	// TODO: Make Classic/Modern detection more reliable
-	if (isGoal && isSuper && !isBPC)
-	{
-		if ((Configuration::goalType == Classic && !isModern) || (Configuration::goalType == Modern && isModern) || Configuration::goalType == Both)
-		{
-			context->ChangeState("TransformStandard");
-
-			if (!Helpers::IsCurrentStageMission())
-				context->ChangeState("Goal"); // Immediately switch back to Goal (prevents softlock from goalring)
-			else
-				context->StateFlag(eStateFlag_MoveToPositionAndWait) = true; // Re-enable flag to remove control from the player
-		}
-	}
-
-	// TODO: Revert some animations being replaced by his floating anim
-
-	// Debug options and information (through Parameter Editor)
 #if _DEBUG
+	// Debug options and information (through Parameter Editor)
 	if (isModern)
 	{
 		if (padState.IsTapped(Sonic::eKeyState_DpadUp))
@@ -110,6 +67,56 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	DebugDrawText::log(format("Stage Beaten: %s", isGoal ? "true" : "false"));
 	DebugDrawText::log(format("Boost Amount: %.0f", boostAmount));
 #endif
+
+	// CONFIG: Super Sonic in Perfect Chaos boss
+	if (isBPC && !isOutOfControl)
+	{
+		if (!isSuper && !isTransforming && !bpcTransformed && !isDead)
+		{
+			ringCount = 50;
+			context->ChangeState("TransformSp");
+			bpcTransformed = true;
+		}
+		else if (ringCount == 0)
+			This->SendMessage(This->m_ActorID, boost::make_shared<Sonic::Message::MsgDead>(false));
+
+		if (isDead)
+			bpcTransformed = false;
+
+		// Update original function
+		originalCPlayerSpeedUpdateParallel(This, _, updateInfo);
+
+		return;
+	}
+	else if (bpcTransformed)
+		bpcTransformed = false;
+
+	if (padState.IsTapped(Sonic::eKeyState_Y) && canTransform)
+	{
+		// TODO: Check whether or not the Super Sonic skill is equipped
+		if (!isSuper && canSuper && !Configuration::skillOnly)
+			context->ChangeState("TransformSp");
+		else if (isSuper && Configuration::superSonicToggle)
+			context->ChangeState("TransformStandard");
+	}
+
+	// CONFIG: Go back to normal if the stage has been beat
+	// TODO: Make Classic/Modern detection more reliable
+	if (isGoal && isSuper && !isBPC)
+	{
+		if ((Configuration::goalType == Classic && !isModern) || (Configuration::goalType == Modern && isModern) || Configuration::goalType == Both)
+		{
+			context->ChangeState("TransformStandard");
+
+			if (!Helpers::IsCurrentStageMission())
+				context->ChangeState("Goal"); // Immediately switch back to Goal (prevents softlock from goalring)
+			else
+				context->StateFlag(eStateFlag_MoveToPositionAndWait) = true; // Re-enable flag to remove control from the player
+		}
+	}
+
+	// TODO: Revert some animations being replaced by his floating anim
+	//       - Probably will require ArchiveTreePatcher shenagigans
 
 	// Update original function
 	originalCPlayerSpeedUpdateParallel(This, _, updateInfo);
