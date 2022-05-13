@@ -4,9 +4,6 @@ bool bpcTransformed = false;
 
 HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPlayerSpeed* This, void* _, const hh::fnd::SUpdateInfo& updateInfo)
 {
-	// Update original function
-	originalCPlayerSpeedUpdateParallel(This, _, updateInfo);
-
 	// Contexts and States
 	const auto context = This->GetContext();
 	const auto stateName = This->m_StateMachine.GetCurrentState()->GetStateName();
@@ -30,11 +27,11 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	const bool isModern = *(uint8_t*)0x1E5E2F8 != 0 && *(uint8_t*)0x1E5E304 == 0;
 
 	// Check if the player can go super based on certain conditions
-	// TODO: Better way of checking whether or not the player can transform into super
+	// TODO: Use the same check that the skill uses for whether or not the player can transform into super
 	const bool canSuper = ringCount >= 50;
 	const bool canTransform = !isOutOfControl && !isGoal && !isWisp && !isTransforming && !isGrinding && !isDiving && stateName != "HangOn" && stateName != "ExternalControl";
 
-	// Force Super Sonic in Perfect Chaos boss (unless disabled in config)
+	// CONFIG: Super Sonic in Perfect Chaos boss
 	if (isBPC && !isOutOfControl)
 	{
 		if (!isSuper && !isTransforming && !bpcTransformed && !isDead)
@@ -48,6 +45,9 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 
 		if (isDead)
 			bpcTransformed = false;
+
+		// Update original function
+		originalCPlayerSpeedUpdateParallel(This, _, updateInfo);
 
 		return;
 	}
@@ -74,13 +74,11 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 
 			if (!Helpers::IsCurrentStageMission())
 				context->ChangeState("Goal"); // Immediately switch back to Goal (prevents softlock from goalring)
+			else
+				context->StateFlag(eStateFlag_MoveToPositionAndWait) = true; // Re-enable flag to remove control from the player
 		}
 	}
 
-	// Prevent Super Sonic from overfilling boost (this is overkill!)
-	if (isSuper)
-		boostAmount = std::clamp(boostAmount, 0.0f, maxBoostAmount);
-	
 	// TODO: Revert some animations being replaced by his floating anim
 
 	// Debug options and information (through Parameter Editor)
@@ -112,6 +110,13 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	DebugDrawText::log(format("Stage Beaten: %s", isGoal ? "true" : "false"));
 	DebugDrawText::log(format("Boost Amount: %.0f", boostAmount));
 #endif
+
+	// Update original function
+	originalCPlayerSpeedUpdateParallel(This, _, updateInfo);
+
+	// Prevent Super Sonic from overfilling boost (this is overkill!)
+	if (isSuper)
+		boostAmount = std::clamp(boostAmount, 0.0f, maxBoostAmount);
 }
 
 extern "C" __declspec(dllexport) void Init()
@@ -124,6 +129,7 @@ extern "C" __declspec(dllexport) void Init()
 	}
 
 	// Patch "Decrease Super Sonic Rings Every Second" by brianuuu
+	// TODO: Make this work for Classic as well
 	WRITE_MEMORY(0x11D6807, uint8_t, 0xC7, 0x47, 0x64);
 	WRITE_MEMORY(0x11D680A, float, 1.0f);
 	WRITE_MEMORY(0x11D680E, uint8_t, 0xEB, 0x1D);
