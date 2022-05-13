@@ -1,9 +1,9 @@
 #include "Configuration.h"
 
-bool Configuration::SuperSonicGoal = false;
-bool Configuration::SuperSonicToggle = true;
-bool Configuration::SkillOnly = false;
-bool Configuration::BPCSuper = true;
+GoalType Configuration::goalType = Both;
+bool Configuration::superSonicToggle = true;
+bool Configuration::skillOnly = false;
+bool Configuration::bpcSuper = true;
 
 bool Configuration::load(const std::string& filePath)
 {
@@ -12,10 +12,10 @@ bool Configuration::load(const std::string& filePath)
 	if (reader.ParseError() != 0)
 		return false;
 
-	SuperSonicGoal = (bool)reader.GetInteger("Main", "SuperSonicGoal", false);
-	SuperSonicToggle = (bool)reader.GetInteger("Main", "SuperSonicToggle", true);
-	SkillOnly = (bool)reader.GetInteger("Main", "SkillOnly", false);
-	BPCSuper = (bool)reader.GetInteger("Main", "BPCSuper", true);
+	goalType = (GoalType)reader.GetInteger("Main", "GoalType", Both);
+	superSonicToggle = (bool)reader.GetInteger("Main", "SuperSonicToggle", true);
+	skillOnly = (bool)reader.GetInteger("Main", "SkillOnly", false);
+	bpcSuper = (bool)reader.GetInteger("Main", "BPCSuper", true);
 
 	return true;
 }

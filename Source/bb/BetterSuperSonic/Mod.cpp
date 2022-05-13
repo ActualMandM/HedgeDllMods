@@ -18,7 +18,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	const float maxBoostAmount = context->GetMaxChaosEnergy();
 
 	// Booleans
-	const bool isBPC = Configuration::BPCSuper && Helpers::CheckCurrentStage("bpc");
+	const bool isBPC = Configuration::bpcSuper && Helpers::CheckCurrentStage("bpc");
 	const bool isSuper = context->StateFlag(eStateFlag_InvokeSuperSonic);
 	const bool isOutOfControl = context->StateFlag(eStateFlag_OutOfControl);
 	const bool isGoal = context->StateFlag(eStateFlag_Goal);
@@ -58,20 +58,23 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	if (padState.IsTapped(Sonic::eKeyState_Y) && canTransform)
 	{
 		// TODO: Check whether or not the Super Sonic skill is equipped
-		if (!isSuper && canSuper && !Configuration::SkillOnly)
+		if (!isSuper && canSuper && !Configuration::skillOnly)
 			context->ChangeState("TransformSp");
-		else if (isSuper && Configuration::SuperSonicToggle)
+		else if (isSuper && Configuration::superSonicToggle)
 			context->ChangeState("TransformStandard");
 	}
 
 	// CONFIG: Go back to normal if the stage has been beat
-	// TODO: Make it configurable between None, Classic Only, Modern Only, and Both (default) once we can reliably detect Classic or Modern
-	if (!Configuration::SuperSonicGoal && isGoal && isSuper && !isBPC)
+	// TODO: Make Classic/Modern detection more reliable
+	if (isGoal && isSuper && !isBPC)
 	{
-		context->ChangeState("TransformStandard");
+		if ((Configuration::goalType == Classic && !isModern) || (Configuration::goalType == Modern && isModern) || Configuration::goalType == Both)
+		{
+			context->ChangeState("TransformStandard");
 
-		if (!Helpers::IsCurrentStageMission())
-			context->ChangeState("Goal"); // Immediately switch back to Goal (prevents softlock from goalring)
+			if (!Helpers::IsCurrentStageMission())
+				context->ChangeState("Goal"); // Immediately switch back to Goal (prevents softlock from goalring)
+		}
 	}
 
 	// Prevent Super Sonic from overfilling boost (this is overkill!)
@@ -80,8 +83,28 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	
 	// TODO: Revert some animations being replaced by his floating anim
 
+	// Debug options and information (through Parameter Editor)
 #if _DEBUG
-	// Debug information (through Parameter Editor)
+	if (isModern)
+	{
+		if (padState.IsTapped(Sonic::eKeyState_DpadUp))
+			ringCount += 50;
+		else if (padState.IsTapped(Sonic::eKeyState_DpadDown) && ringCount >= 50)
+			ringCount -= 50;
+
+		if (padState.IsTapped(Sonic::eKeyState_DpadRight))
+			boostAmount += 25.0f;
+		else if (padState.IsTapped(Sonic::eKeyState_DpadLeft))
+			boostAmount -= 25.0f;
+	}
+	else
+	{
+		if (padState.IsTapped(Sonic::eKeyState_RightBumper))
+			ringCount += 50;
+		else if (padState.IsTapped(Sonic::eKeyState_LeftBumper) && ringCount >= 50)
+			ringCount -= 50;
+	}
+
 	DebugDrawText::log(format("%s Sonic", isModern ? "Modern" : "Classic"));
 	DebugDrawText::log(format("State Name: %s", stateName.c_str()));
 	DebugDrawText::log(format("Can Go Super: %s", canSuper && canTransform ? "true" : "false"));
