@@ -4,12 +4,19 @@ bool bpcTransformed = false;
 
 HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPlayerSpeed* This, void* _, const hh::fnd::SUpdateInfo& updateInfo)
 {
-	// TODO: Check save file and only run this code if the player has beaten the final boss (Configuration::saveCheck)
-	//       - Hidden configuration option, set to false for the code to always execute
+	// TODO: Check save file for if the player has beaten the final boss
+	const bool beatBLB = true;
+
+	// CONFIG: Hidden configuration option, set to false for the code to always execute
+	if (Configuration::saveCheck && !beatBLB)
+	{
+		originalCPlayerSpeedUpdateParallel(This, _, updateInfo);
+		return;
+	}
 
 	// TODO: Play invincibility/custom music when super if config is set to do so (Configuration::superMusic)
-	//       - This will more than likely require another hook to prevent spamming
-	//       - (multiple hooks is probably better for long term anyways lol)
+	//       - This might require another hook to prevent the music from spamming
+	//       - Alternatively could do the same method for Perfect Chaos
 
 	// Contexts and States
 	const auto context = This->GetContext();
@@ -87,7 +94,6 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 
 		// Update original function
 		originalCPlayerSpeedUpdateParallel(This, _, updateInfo);
-
 		return;
 	}
 	else if (bpcTransformed)
