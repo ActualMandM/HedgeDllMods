@@ -31,7 +31,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	const bool isGrinding = strstr(stateName.c_str(), "Grind");
 	const bool isDiving = strstr(stateName.c_str(), "Diving");
 	const bool isDead = strstr(stateName.c_str(), "Dead");
-	const bool isModern = *(uint8_t*)0x1E5E2F8 != 0 && *(uint8_t*)0x1E5E304 == 0;
+	const bool isModern = *(uint32_t*)This == 0x16D4B2C;
 
 	// Check if the player can go super based on certain conditions
 	// TODO: Use the same check that the skill uses for whether or not the player can transform into super
@@ -101,7 +101,6 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	}
 
 	// CONFIG: Go back to normal if the stage has been beat
-	// TODO: Make Classic/Modern detection more reliable
 	if (isGoal && isSuper && !isBPC)
 	{
 		if ((Configuration::goalType == Classic && !isModern) || (Configuration::goalType == Modern && isModern) || Configuration::goalType == Both)
