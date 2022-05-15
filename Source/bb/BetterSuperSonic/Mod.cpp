@@ -20,6 +20,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	uint32_t& ringCount = context->m_RingCount;
 	float& boostAmount = context->m_ChaosEnergy;
 	const float maxBoostAmount = context->GetMaxChaosEnergy();
+	const uint64_t skills = (uint64_t)context->m_Field1A4; // change this back to m_pSkills once BlueBlur fixes mapping
 
 	// Booleans
 	const bool isBPC = Configuration::bpcSuper && Helpers::CheckCurrentStage("bpc");
@@ -32,9 +33,10 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	const bool isDiving = strstr(stateName.c_str(), "Diving");
 	const bool isDead = strstr(stateName.c_str(), "Dead");
 	const bool isModern = *(uint32_t*)This == 0x16D4B2C;
+	const bool hasSpSkill = skills & 0x1000;
 
 	// Check if the player can go super based on certain conditions
-	// TODO: Use the same check that the skill uses for whether or not the player can transform into super
+	// TODO: Use the same check that the game uses for whether or not the player can use a skill
 	const bool canSuper = ringCount >= 50;
 	const bool canTransform = !isOutOfControl && !isGoal && !isWisp && !isTransforming && !isGrinding && !isDiving && stateName != "HangOn" && stateName != "ExternalControl";
 
@@ -63,6 +65,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	DebugDrawText::log(format("%s Sonic", isModern ? "Modern" : "Classic"));
 	DebugDrawText::log(format("State Name: %s", stateName.c_str()));
 	DebugDrawText::log(format("Can Go Super: %s", canSuper && canTransform ? "true" : "false"));
+	DebugDrawText::log(format("Has Skill: %s", hasSpSkill ? "true" : "false"));
 	DebugDrawText::log(format("Super Sonic: %s", isSuper ? "true" : "false"));
 	DebugDrawText::log(format("Stage Beaten: %s", isGoal ? "true" : "false"));
 	DebugDrawText::log(format("Boost Amount: %.0f", boostAmount));
@@ -91,10 +94,10 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	else if (bpcTransformed)
 		bpcTransformed = false;
 
+	// CONFIG: Allow user to transform into super at any time
 	if (padState.IsTapped(Sonic::eKeyState_Y) && canTransform)
 	{
-		// TODO: Check whether or not the Super Sonic skill is equipped
-		if (!isSuper && canSuper && !Configuration::skillOnly)
+		if (!hasSpSkill && !isSuper && canSuper && !Configuration::skillOnly)
 			context->ChangeState("TransformSp");
 		else if (isSuper && Configuration::superSonicToggle)
 			context->ChangeState("TransformStandard");
