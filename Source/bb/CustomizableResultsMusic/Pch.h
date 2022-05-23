@@ -16,6 +16,9 @@
 // LostCodeLoader
 #include <LostCodeLoader.h>
 
+// ScoreGenerations
+#include <ScoreGenerationsAPI.h>
+
 // Other
 #include <INIReader.h>
 #include <Helpers.h>
