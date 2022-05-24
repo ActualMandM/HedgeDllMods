@@ -341,10 +341,10 @@ extern "C" __declspec(dllexport) void Init()
 		exit(-1);
 	}
 
-	WRITE_JUMP(0x00CFD3C8, CustomActClear)
-	WRITE_JUMP(0x00CFD4C9, CustomResult1)
-	WRITE_JUMP(0x00CFD4E7, CustomResult2)
-	WRITE_JUMP(0x00CFD55E, CustomResultsTime)
+	WRITE_JUMP(0x00CFD3C8, CustomActClear);
+	WRITE_JUMP(0x00CFD4C9, CustomResult1);
+	WRITE_JUMP(0x00CFD4E7, CustomResult2);
+	WRITE_JUMP(0x00CFD55E, CustomResultsTime);
 
 	if (Configuration::OnlyRoundClear)
 	{
@@ -357,12 +357,9 @@ extern "C" __declspec(dllexport) void Init()
 	else
 	{
 		// If we aren't forcing round clear, let's instead do classic/modern conditional changing.
-		WRITE_JUMP(0x00CFD47A, RoundClearJump)
+		WRITE_JUMP(0x00CFD47A, RoundClearJump);
 	}
-}
 
-extern "C" __declspec(dllexport) void PostInit()
-{
 	const Results resultC = Configuration::ResultOptionClassic;
 	const Results resultM = Configuration::ResultOptionModern;
 
