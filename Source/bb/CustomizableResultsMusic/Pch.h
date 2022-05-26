@@ -6,18 +6,19 @@
 #include <Windows.h>
 #include <detours.h>
 
+// BlueBlur
+#include <BlueBlur.h>
+
 // std
 #include <stdint.h>
 #include <array>
+#include <format>
 #include <set>
 #include <vector>
 #include <sstream>
 
 // LostCodeLoader
 #include <LostCodeLoader.h>
-
-// ScoreGenerations
-#include <ScoreGenerationsAPI.h>
 
 // Other
 #include <INIReader.h>

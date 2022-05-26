@@ -1,6 +1,14 @@
 #include "Configuration.h"
 
-const char* ResultsChar[] =
+struct resultData
+{
+	Results resultType; // The chosen results.
+	double clearLength; // How long act clear lasts for (-1 for only clear).
+	bool hasERank; // If the chosen results has a E-Rank variant.
+	bool hasBoss; // If the chosen results has a boss clear variant.
+};
+
+const char* resultsChar[] =
 {
 	"Custom",
 	"Sonic1",
@@ -15,11 +23,11 @@ const char* ResultsChar[] =
 	"Sonic06Town",
 	"SecretRings",
 	"Unleashed",
-	"UnleashedBoss",
+	"SmashBros",
 	"BlackKnight",
 	"S4E1",
 	"Colors",
-	"ColorsBoss",
+	"ColorsBoss", // Unused (until repurposed)
 	"S4E2",
 	"LostWorld",
 	"Mania",
@@ -37,334 +45,261 @@ const char* ResultsChar[] =
 	"ColorsSim"
 };
 
-// This lets Classic have a different song than Modern
-// Set these to whatever you want in the config.
-char resultStringM[32];
-char resultStringC[32];
+resultData modernResults;
+resultData classicResults;
 
-static void* cac_jump = (void*)0x00CFD3CD;
+resultData currentResults;
 
-ASMHOOK CustomActClear()
+char clearString[32];
+char bossString[32];
+char result0String[32];
+char result1String[32];
+char result2String[32];
+
+// This prepares the result data.
+resultData PrepareResults(bool isModern)
 {
-	__asm
-	{
-		push eax
-		mov eax, 0x01E5E304 // Classic sonic singleton, is 0 if modern sonic.
-		cmp[eax], 0
-		jne jump
+	Results resultType = Results::Generations;
+	double clearLength = 6.099999904632568; // Default Generations length. (0x17046C0)
+	bool hasERank = false;
+	bool hasBoss = false;
 
-		mov eax, 0x01E5E2F8 // Modern sonic singleton, is 0 if classic sonic.
-		cmp[eax], 0         // Second pass of checking in case something terrible happens (youd be surprised)
-		jz jump
+	if (isModern)
+		resultType = Configuration::ResultOptionModern;
+	else
+		resultType = Configuration::ResultOptionClassic;
 
-		pop eax
-		push offset resultStringM
-		jmp retrn
-
-		jump :
-		pop eax
-		push offset resultStringC
-		nop
-
-		retrn :
-		jmp[cac_jump]
-	}
-}
-
-
-void SRankResult(SRank Option)
-{
-	if (Option == Always)
-	{
-		WRITE_MEMORY(0xCFD4CA, uint8_t, 0xF8, 0x38);
-		WRITE_MEMORY(0xCFD4E8, uint8_t, 0xF8, 0x38);
-	}
-	else if (Option == Never)
-	{
-		WRITE_MEMORY(0xCFD4CA, uint8_t, 0x00, 0x39);
-		WRITE_MEMORY(0xCFD4E8, uint8_t, 0x00, 0x39);
-	}
-}
-
-// Swap for Result 1 - No S Rank
-char result1StringM[32];
-char result1StringC[32];
-
-static void* cr1_jump = (void*)0x00CFD4CE;
-
-ASMHOOK CustomResult1()
-{
-	__asm
-	{
-		push eax
-		mov eax, 0x01E5E304 // Classic sonic singleton, is 0 if modern sonic.
-		cmp[eax], 0
-		jne jump
-
-		mov eax, 0x01E5E2F8 // Modern sonic singleton, is 0 if classic sonic.
-		cmp[eax], 0
-		jz jump
-
-		pop eax
-		push offset result1StringM
-		jmp retrn
-
-		jump :
-		pop eax
-		push offset result1StringC
-
-		retrn :
-		jmp[cr1_jump]
-	}
-}
-
-// Swap for Result 2 - S Rank
-char result2StringM[32];
-char result2StringC[32];
-
-static void* cr2_jump = (void*)0x00CFD4EC;
-
-ASMHOOK CustomResult2()
-{
-	__asm
-	{
-		push eax
-		mov eax, 0x01E5E304 // Classic sonic singleton, is 0 if modern sonic.
-		cmp[eax], 0
-		jne jump
-
-		mov eax, 0x01E5E2F8 // Modern sonic singleton, is 0 if classic sonic.
-		cmp[eax], 0
-		jz jump
-
-		pop eax
-		push offset result2StringM
-		jmp retrn
-
-		jump :
-		pop eax
-		push offset result2StringC
-
-		retrn :
-		jmp[cr2_jump]
-	}
-}
-
-// Swaps between Modern and Classic's result times.
-// Set these to whatever you want in the config.
-double   resultTimeM = 6.099999904632568;  // Modern  music result time, default at 0x017046C0
-double   resultTimeC = 7.200000000000000;  // Classic music result time
-
-static void* resultTimeJumpOut = (void*)0x00CFD566;
-
-ASMHOOK CustomResultsTime()
-{
-	__asm
-	{
-		push eax    // Do this so we can use EAX for whatever
-
-		mov eax, 0x01E5E304 // Classic sonic singleton, is 0 if modern sonic.
-		cmp[eax], 0
-		jne jump
-
-		mov eax, 0x01E5E2F8 // Modern sonic singleton, is 0 if classic sonic.
-		cmp[eax], 0
-		jz jump
-
-		// Modern sonic duration
-		lea eax, resultTimeM
-		movsd xmm1, [eax]
-		jmp retrn
-
-		// Classic sonic duration
-		jump :
-		lea eax, resultTimeC
-		movsd xmm1, [eax]
-		jmp retrn
-
-
-		retrn :
-		pop eax
-		jmp[resultTimeJumpOut]
-	}
-}
-
-static void* roundClearJumpReturnAddr = (void*)0x00CFD488;
-static void* roundClearJumpOutAddr    = (void*)0x00CFD519;
-
-bool resultOnlyM = false;
-bool resultOnlyC = false;
-
-ASMHOOK RoundClearJump()
-{
-	__asm
-	{
-		// boilerplate
-		and eax, 0FFh
-
-		push eax            // We need eax for later, so store it. 
-
-		mov eax, 0x01E5E304 // Classic sonic singleton, is 0 if modern sonic.
-		cmp[eax], 0
-		pop eax
-		jne compareClassic
-
-		push eax            // Second pass, just in case.
-		
-		mov eax, 0x01E5E2F8 // Modern sonic singleton, is 0 if classic sonic.
-		cmp[eax], 0
-		pop eax
-		jz compareClassic
-
-		// Modern comparison
-		cmp resultOnlyM, 1
-		jz jump              // If we're Modern sonic w/ Result Only set, jump out and skip comparison.
-		jmp compareOriginal  // Otherwise, do our original comparison.
-
-		// Classic comparison
-		compareClassic:
-		cmp resultOnlyC, 1
-		jz jump              // If we're Classic sonic w/ Result Only set, jump out and skip comparison.
-		jmp compareOriginal  // Otherwise, do our original comparison.
-
-
-		// Original comparison
-		compareOriginal:
-		cmp eax, 1Ah
-		ja jump
-
-		// If all checks fail, continue with result code.
-		jmp [roundClearJumpReturnAddr]
-
-		jump:
-		jmp [roundClearJumpOutAddr]
-	}
-}
-
-void OnlyRoundClear(bool isModernSonic)
-{
-	if (Configuration::OnlyRoundClear) return;
-
-#if _DEBUG
-	printf("[Custom Results Music] Round Clear will only play for %s Sonic\n", isModernSonic ? "Modern" : "Classic");
-#endif
-
-	if (isModernSonic) resultOnlyM = true;
-	else               resultOnlyC = true;
-}
-
-double SetResultTime(Results result, bool isModernSonic)
-{
-	double outValue;
-	
-	switch (result)
+	switch (resultType)
 	{
 		case Sonic06:
 		case Sonic06Town:
-			outValue = 7.381;
+		{
+			clearLength = 7.381;
 			break;
+		}
 		case Unleashed:
-		case UnleashedBoss:
-			outValue = 6.021;
+		{
+			clearLength = 6.021;
+			hasERank = true;
+			hasBoss = true;
 			break;
+		}
 		case Colors:
-		case ColorsBoss:
 		case ColorsSim:
-			outValue = 8.01;
+		{
+			clearLength = 8.01;
+
+			if (resultType != Results::ColorsSim)
+				hasBoss = true;
+
 			break;
+		}
 		case LostWorld:
-			outValue = 8.182;
+		{
+			clearLength = 8.182;
 			break;
+		}
 		case BlackKnight:
-			outValue = 10.0;
+		{
+			clearLength = 10.0;
+			hasERank = true;
 			break;
+		}
+		case SmashBros:
+		{
+			clearLength = 7.631;
+			break;
+		}
 		case Custom:
-			if (Configuration::CustomOnlyRC)  OnlyRoundClear(isModernSonic);
-			outValue = (double)Configuration::CustomDuration;
+		{
+			if (Configuration::CustomOnlyRC)
+				clearLength = -1;
+			else
+				clearLength = (double)Configuration::CustomDuration;
+
+			hasERank = Configuration::CustomERank;
+			hasBoss = Configuration::CustomBoss;
+
 			break;
+		}
 		case Custom2:
-			if (Configuration::Custom2OnlyRC) OnlyRoundClear(isModernSonic);
-			outValue = (double)Configuration::Custom2Duration;
+		{
+			if (Configuration::Custom2OnlyRC)
+				clearLength = -1;
+			else
+				clearLength = (double)Configuration::Custom2Duration;
+
+			hasERank = Configuration::Custom2ERank;
+			hasBoss = Configuration::Custom2Boss;
+
 			break;
+		}
 		default:
-			if(static_cast<int>(result) >= 0) OnlyRoundClear(isModernSonic);
-			outValue = *(double*)0x017046C0;
+		{
+			if (resultType != Results::Generations)
+				clearLength = -1;
+
 			break;
+		}
 	}
 
-#if _DEBUG
-	printf("[Custom Results Music] Result duration set to %f\n", outValue);
-#endif
-	
-	return outValue;
+	if (hasERank && !isModern)
+		hasERank = false;
+
+	return { resultType, clearLength, hasERank, hasBoss };
 }
 
-void PrepareStrings(Results resultC, Results resultM)
+// This prepares the strings that will get used.
+void PrepareStrings(resultData resultData)
 {
-	int resultClassic = (int)resultC;
-	int resultModern  = (int)resultM;
+	int resultType = (int)resultData.resultType;
+	const char* resultsName = resultType < 0 ? "" : resultsChar[resultType];
 
-#if _DEBUG
-	printf("[Custom Results Music] Classic results: %i\n", resultClassic);
-	printf("[Custom Results Music] Modern results: %i\n", resultModern);
-#endif
+	strcpy(clearString, resultType < 0 ? "Result" : std::format("RC_{}", resultsName).c_str());
+	strcpy(bossString, resultType < 0 ? "Result" : std::format("RC_{}Boss", resultsName).c_str());
 
-	const char* resultsTypeC = resultClassic < 0 ? "" : ResultsChar[resultClassic];
-	const char* resultsTypeM = resultModern  < 0 ? "" : ResultsChar[resultModern ];
+	strcpy(result0String, resultType < 0 ? "Result1" : std::format("R0_{}", resultsName).c_str());
+	strcpy(result1String, resultType < 0 ? "Result1" : std::format("R1_{}", resultsName).c_str());
+	strcpy(result2String, resultType < 0 ? "Result2" : std::format("R2_{}", resultsName).c_str());
 
-	strcpy( resultStringC, resultClassic < 0 ? "Result"  : ("RC_" + std::string(resultsTypeC)).c_str());
-	strcpy(result1StringC, resultClassic < 0 ? "Result1" : ("R1_" + std::string(resultsTypeC)).c_str());
-	strcpy(result2StringC, resultClassic < 0 ? "Result2" : ("R2_" + std::string(resultsTypeC)).c_str());
+	// S-Rank Type configuration
+	if (Configuration::SRankType == Always)
+		strcpy(result2String, resultType < 0 ? "Result1" : std::format("R1_{}", resultsName).c_str());
+	else if (Configuration::SRankType == Never)
+		strcpy(result1String, resultType < 0 ? "Result2" : std::format("R2_{}", resultsName).c_str());
+}
 
-	strcpy( resultStringM, resultModern  < 0 ? "Result"  : ("RC_" + std::string(resultsTypeM)).c_str());
-	strcpy(result1StringM, resultModern  < 0 ? "Result1" : ("R1_" + std::string(resultsTypeM)).c_str());
-	strcpy(result2StringM, resultModern  < 0 ? "Result2" : ("R2_" + std::string(resultsTypeM)).c_str());
-	
-	switch (Configuration::SRankType)
+/////////////////
+// HOOKS BELOW //
+/////////////////
+
+// This fades out the previous track instead of making it stop.
+int PlayMusicFadeOutPrevious(int a1, const Hedgehog::Base::CSharedString& name, float fadeInTime)
+{
+	int result = 0;
+	uint32_t func = 0xD62C90;
+	__asm
 	{
-		case Always:
-			strcpy(result2StringC, resultClassic < 0 ? "Result1" : ("R1_" + std::string(resultsTypeC)).c_str());
-			strcpy(result2StringM, resultModern  < 0 ? "Result1" : ("R1_" + std::string(resultsTypeM)).c_str());
-			break;
-		case Never:
-			strcpy(result1StringC, resultClassic < 0 ? "Result2" : ("R2_" + std::string(resultsTypeC)).c_str());
-			strcpy(result1StringM, resultModern  < 0 ? "Result2" : ("R2_" + std::string(resultsTypeM)).c_str());
-			break;
+		push fadeInTime
+		push name
+		mov eax, a1
+		call func
+		//add esp, 8
+
+		mov result, eax
 	}
+	return result;
+}
+
+// This stops the previous track instead of making it fade out.
+// FUNCTION_PTR(uint32_t, __stdcall, PlayResultMusic, 0xD62440, int a1, const Hedgehog::Base::CSharedString& name, float fadeInTime);
+
+HOOK(void, __fastcall, _PlayActClear, 0xCFD2D0, int This)
+{
+	original_PlayActClear(This);
+
+	uint32_t gameplayFlowStageAct = *reinterpret_cast<uint32_t*>(This + 8);
+	uint32_t sender = *reinterpret_cast<uint32_t*>(gameplayFlowStageAct + 96);
+
+	// There's a chance that this will have false positives. Find an alternative if this is the case.
+	bool isModern = Sonic::Player::CSonicClassicContext::GetInstance() == nullptr;
+
+	if (isModern)
+		currentResults = modernResults;
+	else
+		currentResults = classicResults;
+
+	PrepareStrings(currentResults);
+
+	bool isBoss = currentResults.hasBoss && (Helpers::CheckCurrentStage("bms") || Helpers::CheckCurrentStage("bde") || Helpers::CheckCurrentStage("bsd") || Helpers::CheckCurrentStage("bpc") || Helpers::CheckCurrentStage("bsl") || Helpers::CheckCurrentStage("bne") || Helpers::CheckCurrentStage("blb"));
+
+	PlayMusicFadeOutPrevious(sender, isBoss ? bossString : clearString, 0.0f);
+}
+
+// This function sets the time once, we don't need to nop it or anything.
+HOOK(void*, __fastcall, _CalcScoreAndSetTime, 0xCFD550, int This)
+{
+	void* result = original_CalcScoreAndSetTime(This);
+	*(double*)(This + 0x2C) = currentResults.clearLength - 0.25;
+	return result;
+}
+
+HOOK(void, __fastcall, _PlayResults, 0xCFD410, int This)
+{
+	if (Configuration::OnlyRoundClear || currentResults.clearLength == -1)
+		return;
+
+	// Get AppDocument this way w/o dealing with "CHolderBase"
+	auto appDocument = Sonic::CApplicationDocument::GetInstance();
+	auto docMember = appDocument->m_pMember;
+
+	// Awful pointer arithmetic to get the data we need.
+#pragma region Constants
+	const uint32_t gameplayFlowStageAct = *reinterpret_cast<uint32_t*>(This + 8);
+
+	const uint32_t sender = *reinterpret_cast<uint32_t*>(gameplayFlowStageAct + 96);
+
+	const uint32_t gameParameter = *reinterpret_cast<uint32_t*>(reinterpret_cast<uint32_t>(docMember) + 0x1B4);
+
+	const float deltaTime = *reinterpret_cast<float*>(*reinterpret_cast<uint32_t*>(This + 0x0C) + 0x18);
+
+	const unsigned __int8 compareFlag = (unsigned __int8)**reinterpret_cast<uint32_t**>(gameParameter + 0x80);
+
+	// Signed, because it can be negative with Score Generations's E-Rank.
+	const int32_t rank = *reinterpret_cast<int32_t*>(gameplayFlowStageAct + 0x174);
+#pragma endregion 
+
+	// Pointer data that we're going to modify.
+	double* pSongTime = reinterpret_cast<double*>(This + 0x2C);
+	uint8_t* pScoreType = reinterpret_cast<uint8_t*>(This + 0x28);
+
+	///////////////////////
+	// Logic starts here //
+	///////////////////////
+
+	if (!(compareFlag <= 0x1A && !*pScoreType))
+		return;
+
+	*pSongTime -= (double)deltaTime;
+
+	if (*pSongTime >= 0.0)
+		return;
+
+	bool isSRank = rank == 4;
+	bool isERank = rank < 0; // For Score Generations support.
+
+	*pScoreType = isSRank ? 1 : 2;
+
+	char resultMusic[32];
+
+	if (isERank && currentResults.hasERank)
+		strcpy(resultMusic, result0String);
+	else
+		strcpy(resultMusic, isSRank ? result2String : result1String);
+
+	// Simply do what Generations does for now.
+	PlayMusicFadeOutPrevious(sender, resultMusic, 0.0f);
 }
 
 extern "C" __declspec(dllexport) void Init()
 {
+	// Load the configuration file.
 	if (!Configuration::load("CRM.ini"))
 	{
-		MessageBox(nullptr, TEXT("Failed to load CRM.ini!\nPlease configure the mod via HedgeModManager's Configure Mod option."), TEXT("Customizable Results Music"), MB_ICONERROR);
+		MessageBox(nullptr, TEXT("Failed to load CRM.ini!\nPlease configure the mod via HedgeModManager's Configure Mod option."),
+			TEXT("Customizable Results Music"), MB_ICONERROR);
+
 		exit(-1);
 	}
 
-	WRITE_JUMP(0x00CFD3C8, CustomActClear);
-	WRITE_JUMP(0x00CFD4C9, CustomResult1);
-	WRITE_JUMP(0x00CFD4E7, CustomResult2);
-	WRITE_JUMP(0x00CFD55E, CustomResultsTime);
+	// Prepare the results data.
+	modernResults = PrepareResults(true);
+	classicResults = PrepareResults(false);
 
-	if (Configuration::OnlyRoundClear)
-	{
-		printf("[Custom Results Music] Only Round Clear will play");
-		// Changes former to latter:
-		// cmp eax, 0x1A
-		// jmp [0x00CFD519] -- ret -- nop x3
-		WRITE_MEMORY(0xCFD47F, uint8_t, 0xE9, 0x95, 0x00, 0x00, 0x00, 0xC3, 0x90, 0x90, 0x90);
-	}
-	else
-	{
-		// If we aren't forcing round clear, let's instead do classic/modern conditional changing.
-		WRITE_JUMP(0x00CFD47A, RoundClearJump);
-	}
-
-	const Results resultC = Configuration::ResultOptionClassic;
-	const Results resultM = Configuration::ResultOptionModern;
-
-	PrepareStrings(resultC, resultM);
-
-	resultTimeC = SetResultTime(resultC, false);
-	resultTimeM = SetResultTime(resultM, true);
+	// Install the hooks.
+	WRITE_JUMP(0xCFD3C8, 0xCFD3D6);
+	WRITE_JUMP(0xCFD3DD, 0xCFD400);
+	INSTALL_HOOK(_PlayActClear);
+	INSTALL_HOOK(_CalcScoreAndSetTime);
+	INSTALL_HOOK(_PlayResults);
 }
