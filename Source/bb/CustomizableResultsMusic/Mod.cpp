@@ -4,6 +4,7 @@ struct resultData
 {
 	Results resultType; // The chosen results.
 	double clearLength; // How long act clear lasts for (-1 for only clear).
+	float crossFade; // How long the cross fade to results lasts for.
 	bool hasERank; // If the chosen results has a E-Rank variant.
 	bool hasBoss; // If the chosen results has a boss clear variant.
 };
@@ -61,6 +62,7 @@ resultData PrepareResults(bool isModern)
 {
 	Results resultType = Results::Generations;
 	double clearLength = 6.099999904632568; // Default Generations length. (0x17046C0)
+	float crossFade = 0.0f;
 	bool hasERank = false;
 	bool hasBoss = false;
 
@@ -80,6 +82,7 @@ resultData PrepareResults(bool isModern)
 		case Unleashed:
 		{
 			clearLength = 6.021;
+			crossFade = 0.8f;
 			hasERank = true;
 			hasBoss = true;
 			break;
@@ -88,6 +91,7 @@ resultData PrepareResults(bool isModern)
 		case ColorsSim:
 		{
 			clearLength = 8.01;
+			crossFade = 0.2f;
 
 			if (resultType != Results::ColorsSim)
 				hasBoss = true;
@@ -117,6 +121,7 @@ resultData PrepareResults(bool isModern)
 			else
 				clearLength = (double)Configuration::CustomDuration;
 
+			crossFade = Configuration::CustomCrossfade;
 			hasERank = Configuration::CustomERank;
 			hasBoss = Configuration::CustomBoss;
 
@@ -129,6 +134,7 @@ resultData PrepareResults(bool isModern)
 			else
 				clearLength = (double)Configuration::Custom2Duration;
 
+			crossFade = Configuration::Custom2Crossfade;
 			hasERank = Configuration::Custom2ERank;
 			hasBoss = Configuration::Custom2Boss;
 
@@ -146,7 +152,7 @@ resultData PrepareResults(bool isModern)
 	if (hasERank && !isModern)
 		hasERank = false;
 
-	return { resultType, clearLength, hasERank, hasBoss };
+	return { resultType, clearLength, crossFade, hasERank, hasBoss };
 }
 
 // This prepares the strings that will get used.
@@ -278,7 +284,7 @@ HOOK(void, __fastcall, _PlayResults, 0xCFD410, int This)
 		strcpy(resultMusic, isSRank ? result2String : result1String);
 
 	// Simply do what Generations does for now.
-	PlayMusicFadeOutPrevious(sender, resultMusic, Configuration::Crossfade ? 0.8f : 0.0f);
+	PlayMusicFadeOutPrevious(sender, resultMusic, currentResults.crossFade);
 }
 
 extern "C" __declspec(dllexport) void Init()

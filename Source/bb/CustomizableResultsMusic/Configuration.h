@@ -52,17 +52,18 @@ class Configuration
 		static Results ResultOptionModern;
 		static SRank SRankType;
 		static bool OnlyRoundClear;
-		static bool Crossfade;
 
 		static bool CustomOnlyRC;
 		static bool CustomBoss;
 		static bool CustomERank;
 		static float CustomDuration;
+		static float CustomCrossfade;
 
 		static bool Custom2OnlyRC;
 		static bool Custom2Boss;
 		static bool Custom2ERank;
 		static float Custom2Duration;
+		static float Custom2Crossfade;
 
 		static bool load(const std::string& filePath);
 };
