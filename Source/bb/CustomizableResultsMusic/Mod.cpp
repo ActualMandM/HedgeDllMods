@@ -281,7 +281,7 @@ HOOK(void, __fastcall, _PlayResults, 0xCFD410, int This)
 	if (isERank && currentResults.hasERank)
 		strcpy(resultMusic, result0String);
 	else
-		strcpy(resultMusic, isSRank ? result2String : result1String);
+		strcpy(resultMusic, isSRank ? result1String : result2String);
 
 	// Simply do what Generations does for now.
 	PlayMusicFadeOutPrevious(sender, resultMusic, currentResults.crossFade);
