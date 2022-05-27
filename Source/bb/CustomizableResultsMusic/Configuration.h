@@ -52,6 +52,7 @@ class Configuration
 		static Results ResultOptionModern;
 		static SRank SRankType;
 		static bool OnlyRoundClear;
+		static bool Crossfade;
 
 		static bool CustomOnlyRC;
 		static bool CustomBoss;

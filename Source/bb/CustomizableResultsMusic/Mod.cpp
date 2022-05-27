@@ -278,7 +278,7 @@ HOOK(void, __fastcall, _PlayResults, 0xCFD410, int This)
 		strcpy(resultMusic, isSRank ? result2String : result1String);
 
 	// Simply do what Generations does for now.
-	PlayMusicFadeOutPrevious(sender, resultMusic, 0.0f);
+	PlayMusicFadeOutPrevious(sender, resultMusic, Configuration::Crossfade ? 0.8f : 0.0f);
 }
 
 extern "C" __declspec(dllexport) void Init()
