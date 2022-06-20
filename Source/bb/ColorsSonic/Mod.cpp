@@ -1,5 +1,7 @@
 #include "ArchiveTreePatcher.h"
+#include "ColorsPhysics.h"
 #include "Configuration.h"
+#include "AnimationSetPatcher.h"
 
 vector<string> sonicArchives = { "Sonic", "Title", "ev031", "ev041", "ev042", "ev091", "evSonic" };
 static const char* costumeType[] = { "", "MetalGold", "MetalSilver", "Paint", "PolkaDot" };
@@ -99,6 +101,9 @@ extern "C" __declspec(dllexport) void Init()
 	}
 
 	ArchiveTreePatcher::applyPatches();
+
+	AnimationSetPatcher::applyPatches();
+	ColorsPhysics::applyPatches();
 }
 
 extern "C" __declspec(dllexport) void PostInit()
