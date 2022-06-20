@@ -6,10 +6,14 @@
     <ClCompile Include="Mod.cpp" />
     <ClCompile Include="ArchiveTreePatcher.cpp" />
     <ClCompile Include="Configuration.cpp" />
+    <ClCompile Include="ColorsPhysics.cpp" />
+    <ClCompile Include="AnimationSetPatcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="ArchiveTreePatcher.h" />
     <ClInclude Include="Configuration.h" />
+    <ClInclude Include="ColorsPhysics.h" />
+    <ClInclude Include="AnimationSetPatcher.h" />
   </ItemGroup>
 </Project>
