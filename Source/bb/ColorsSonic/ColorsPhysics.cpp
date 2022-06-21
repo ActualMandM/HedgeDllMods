@@ -62,6 +62,7 @@ static void fCGlitterEnd
 
 bool homingDummy = false;
 SharedPtrTypeless jumpBallPfxHandle;
+const char* volatile const AirBoost = "AirBoost";
 HOOK(int, __fastcall, ColorsPhysics_CSonicStateHomingAttackBegin, 0x1232040, hh::fnd::CStateMachineBase::CStateBase* This)
 {
 	auto* context = (Sonic::Player::CPlayerSpeedContext*)This->GetContextBase();
@@ -79,7 +80,7 @@ HOOK(int, __fastcall, ColorsPhysics_CSonicStateHomingAttackBegin, 0x1232040, hh:
 	else
 	{
 		homingDummy = true;
-		WRITE_MEMORY(0x1232056, char*, "AirBoost");
+		WRITE_MEMORY(0x1232056, char*, AirBoost);
 
 		// Don't use locus effect
 		WRITE_JUMP(0x1232508, (void*)0x1232511);
@@ -98,6 +99,7 @@ HOOK(void, __fastcall, ColorsPhysics_CSonicStateHomingAttackEnd, 0x1231F80, hh::
 }
 
 bool isAirBoostToFall = false;
+bool isBoostAtFallBegin = false;
 void __declspec(naked) ColorsPhysics_AirBoostToFall()
 {
     static uint32_t returnAddress = 0x1233330;
@@ -111,26 +113,51 @@ void __declspec(naked) ColorsPhysics_AirBoostToFall()
 
 HOOK(int, __fastcall, ColorsPhysics_CSonicStateFallBegin, 0x1118FB0, hh::fnd::CStateMachineBase::CStateBase* This)
 {
-	if (isAirBoostToFall)
+	auto* context = (Sonic::Player::CPlayerSpeedContext*)This->GetContextBase();
+	isBoostAtFallBegin = context->StateFlag(eStateFlag_Boost) && !isAirBoostToFall;
+
+	if (isAirBoostToFall || isBoostAtFallBegin)
 	{
 		// Don't transition animation
 		WRITE_MEMORY(0x111910F, uint8_t, 0xEB);
-		WRITE_MEMORY(0x1118E0C, uint8_t, 0xEB);
-		WRITE_MEMORY(0x1118EA7, uint8_t, 0xEB);
+		WRITE_MEMORY(0x1118DE5, uint8_t, 0xEB);
+		WRITE_MEMORY(0x1118E94, uint8_t, 0xEB);
+
+		if (isBoostAtFallBegin)
+		{
+			context->ChangeAnimation(AirBoost);
+		}
 	}
 	else
 	{
 		// Revert
 		WRITE_MEMORY(0x111910F, uint8_t, 0x75);
-		WRITE_MEMORY(0x1118E0C, uint8_t, 0x75);
-		WRITE_MEMORY(0x1118EA7, uint8_t, 0x76);
+		WRITE_MEMORY(0x1118DE5, uint8_t, 0x75);
+		WRITE_MEMORY(0x1118E94, uint8_t, 0x76);
 	}
 	return originalColorsPhysics_CSonicStateFallBegin(This);
+}
+
+HOOK(void, __fastcall, ColorsPhysics_CSonicStateFallAdvance, 0x1118C50, hh::fnd::CStateMachineBase::CStateBase* This)
+{
+	auto* context = (Sonic::Player::CPlayerSpeedContext*)This->GetContextBase();
+	if (isBoostAtFallBegin && !context->StateFlag(eStateFlag_Boost))
+	{
+		isBoostAtFallBegin = false;
+		context->ChangeAnimation("Fall");
+
+		// Allow change animation to Fall/FallLarge
+		WRITE_MEMORY(0x1118DE5, uint8_t, 0x75);
+		WRITE_MEMORY(0x1118E94, uint8_t, 0x76);
+	}
+
+	return originalColorsPhysics_CSonicStateFallAdvance(This);
 }
 
 HOOK(int, __fastcall, ColorsPhysics_CSonicStateFallEnd, 0x1118F20, hh::fnd::CStateMachineBase::CStateBase* This)
 {
 	isAirBoostToFall = false;
+	isBoostAtFallBegin = false;
 	return originalColorsPhysics_CSonicStateFallEnd(This);
 }
 
@@ -145,6 +172,7 @@ void ColorsPhysics::applyPatches()
 	// After AirBoost it won't change to fall animation
 	WRITE_JUMP(0x123332B, ColorsPhysics_AirBoostToFall);
 	INSTALL_HOOK(ColorsPhysics_CSonicStateFallBegin);
+	INSTALL_HOOK(ColorsPhysics_CSonicStateFallAdvance);
 	INSTALL_HOOK(ColorsPhysics_CSonicStateFallEnd);
 
 	// Always kill boost effect immediately
