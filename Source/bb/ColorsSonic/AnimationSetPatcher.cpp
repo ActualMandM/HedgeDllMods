@@ -165,8 +165,8 @@ const char* volatile const AnimationSetPatcher::JumpBallNoBlend = "JumpBallNoBle
 
 void AnimationSetPatcher::applyPatches()
 {
-    m_newAnimationData.emplace_back(JumpBallNoBlend, "sn_ball_loop", 1.0f, true, nullptr);
-    m_newAnimationDataSuper.emplace_back(JumpBallNoBlend, "ssn_ball_loop", 1.0f, true, nullptr);
+    m_newAnimationData.emplace_back(JumpBallNoBlend, "sn_jumpball_loop", 1.0f, true, nullptr);
+    m_newAnimationDataSuper.emplace_back(JumpBallNoBlend, "ssn_jumpball_loop", 1.0f, true, nullptr);
 
     if (!m_newAnimationData.empty())
     {
