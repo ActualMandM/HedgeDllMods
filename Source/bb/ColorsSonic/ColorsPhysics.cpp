@@ -161,6 +161,38 @@ HOOK(int, __fastcall, ColorsPhysics_CSonicStateFallEnd, 0x1118F20, hh::fnd::CSta
 	return originalColorsPhysics_CSonicStateFallEnd(This);
 }
 
+std::vector<bool> startSound;
+HOOK(bool, __fastcall, ColorsPhysics_CSonicStateStartCrouchingBegin, 0xDEF010, hh::fnd::CStateMachineBase::CStateBase* This)
+{
+	startSound.clear();
+	startSound.resize(3);
+	return originalColorsPhysics_CSonicStateStartCrouchingBegin(This);
+}
+
+HOOK(void, __fastcall, ColorsPhysics_CSonicStateStartCrouchingAdvance, 0xDEF180, hh::fnd::CStateMachineBase::CStateBase* This)
+{
+	auto* context = (Sonic::Player::CPlayerSpeedContext*)This->GetContextBase();
+	if (!startSound[0] && This->m_Time * 30.0f >= 55.0f)
+	{
+		startSound[0] = true;
+		context->PlaySound(5002098, 1);
+	}
+
+	if (!startSound[1] && This->m_Time * 30.0f >= 70.0f)
+	{
+		startSound[1] = true;
+		context->PlaySound(5002099, 1);
+	}
+
+	if (!startSound[2] && This->m_Time * 30.0f >= 87.0f)
+	{
+		startSound[2] = true;
+		context->PlaySound(5002100, 1);
+	}
+
+	originalColorsPhysics_CSonicStateStartCrouchingAdvance(This);
+}
+
 void ColorsPhysics::applyPatches()
 {
 	static float homingDummyAfterSpeedMultiplier = 0.8f;
@@ -178,4 +210,8 @@ void ColorsPhysics::applyPatches()
 	// Always kill boost effect immediately
 	WRITE_NOP(0xDFB32D, 2);
 	WRITE_NOP(0xDFB39A, 2);
+
+	// Start animation footstep
+	INSTALL_HOOK(ColorsPhysics_CSonicStateStartCrouchingBegin);
+	INSTALL_HOOK(ColorsPhysics_CSonicStateStartCrouchingAdvance);
 }
