@@ -32,5 +32,6 @@ public:
 	static void applyPatches();
 
 	static std::vector<StartData> m_startCrouchingData;
+	static std::vector<StartData> m_startStandingData;
 };
 
