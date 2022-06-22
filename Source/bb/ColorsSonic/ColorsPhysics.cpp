@@ -161,33 +161,48 @@ HOOK(int, __fastcall, ColorsPhysics_CSonicStateFallEnd, 0x1118F20, hh::fnd::CSta
 	return originalColorsPhysics_CSonicStateFallEnd(This);
 }
 
-std::vector<bool> startSound;
-HOOK(bool, __fastcall, ColorsPhysics_CSonicStateStartCrouchingBegin, 0xDEF010, hh::fnd::CStateMachineBase::CStateBase* This)
+std::vector<StartData> ColorsPhysics::m_startCrouchingData;
+size_t startCrouchingIndex = 0;
+HOOK(bool, __stdcall, ColorsPhysics_StartSequence, 0xDFCE30, uint32_t* This)
 {
-	startSound.clear();
-	startSound.resize(3);
-	return originalColorsPhysics_CSonicStateStartCrouchingBegin(This);
+	switch (This[1329])
+	{
+	case 2: // StartEventDash
+	case 3:
+	{
+		for (StartData& data : ColorsPhysics::m_startCrouchingData)
+		{
+			data.reset();
+		}
+
+		startCrouchingIndex = (startCrouchingIndex + 1) % ColorsPhysics::m_startCrouchingData.size();
+		char const* animationName = ColorsPhysics::m_startCrouchingData[startCrouchingIndex].m_animationName.c_str();
+		WRITE_MEMORY(0xDFD0AB, char*, animationName);
+		WRITE_MEMORY(0xDFD1CA, char*, animationName);
+		break;
+	}
+	case 4: // StartEventStand
+	{
+
+		break;
+	}
+	}
+
+	return originalColorsPhysics_StartSequence(This);
 }
 
 HOOK(void, __fastcall, ColorsPhysics_CSonicStateStartCrouchingAdvance, 0xDEF180, hh::fnd::CStateMachineBase::CStateBase* This)
 {
 	auto* context = (Sonic::Player::CPlayerSpeedContext*)This->GetContextBase();
-	if (!startSound[0] && This->m_Time * 30.0f >= 55.0f)
-	{
-		startSound[0] = true;
-		context->PlaySound(5002098, 1);
-	}
 
-	if (!startSound[1] && This->m_Time * 30.0f >= 70.0f)
+	StartData& data = ColorsPhysics::m_startCrouchingData[startCrouchingIndex];
+	for (StartSoundData& soundData : data.m_soundData)
 	{
-		startSound[1] = true;
-		context->PlaySound(5002099, 1);
-	}
-
-	if (!startSound[2] && This->m_Time * 30.0f >= 87.0f)
-	{
-		startSound[2] = true;
-		context->PlaySound(5002100, 1);
+		if (!soundData.m_played && This->m_Time >= soundData.m_soundTiming)
+		{
+			soundData.m_played = true;
+			context->PlaySound(soundData.m_cueID, 1);
+		}
 	}
 
 	originalColorsPhysics_CSonicStateStartCrouchingAdvance(This);
@@ -211,7 +226,31 @@ void ColorsPhysics::applyPatches()
 	WRITE_NOP(0xDFB32D, 2);
 	WRITE_NOP(0xDFB39A, 2);
 
-	// Start animation footstep
-	INSTALL_HOOK(ColorsPhysics_CSonicStateStartCrouchingBegin);
+	// StartCrouchingData
+	m_startCrouchingData =
+	{
+		{
+			// sn_start_normal07
+			"StartEventDash",
+			{
+				{ 1.839f, 5002098, false },
+				{ 2.335f, 5002099, false },
+				{ 2.914f, 5002100, false },
+			}
+		},
+		{
+			// sn_start_normal00
+			"StartEventDash2",
+			{
+				{ 0.597f, 5002089, false },
+				{ 0.877f, 5002090, false },
+			}
+		},
+	};
+
+	// Start animation sfx
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+	startCrouchingIndex = std::rand() % ColorsPhysics::m_startCrouchingData.size();
+	INSTALL_HOOK(ColorsPhysics_StartSequence);
 	INSTALL_HOOK(ColorsPhysics_CSonicStateStartCrouchingAdvance);
 }

@@ -168,6 +168,10 @@ void AnimationSetPatcher::applyPatches()
     m_newAnimationData.emplace_back(JumpBallNoBlend, "sn_jumpball_loop", 1.0f, true, nullptr);
     m_newAnimationDataSuper.emplace_back(JumpBallNoBlend, "ssn_jumpball_loop", 1.0f, true, nullptr);
 
+	// Extra start animations
+	m_newAnimationData.emplace_back("StartEventDash2", "sim_start_normal", 1.0f, false, nullptr);
+	m_newAnimationData.emplace_back("StartEventStand2", "sim_start_wait_a", 1.0f, false, nullptr);
+
     if (!m_newAnimationData.empty())
     {
         INSTALL_HOOK(InitializeSonicAnimationList);
