@@ -163,6 +163,8 @@ HOOK(int, __fastcall, ColorsPhysics_CSonicStateFallEnd, 0x1118F20, hh::fnd::CSta
 
 std::vector<StartData> ColorsPhysics::m_startCrouchingData;
 size_t startCrouchingIndex = 0;
+std::vector<StartData> ColorsPhysics::m_startStandingData;
+size_t startStandingIndex = 0;
 HOOK(bool, __stdcall, ColorsPhysics_StartSequence, 0xDFCE30, uint32_t* This)
 {
 	switch (This[1329])
@@ -183,7 +185,14 @@ HOOK(bool, __stdcall, ColorsPhysics_StartSequence, 0xDFCE30, uint32_t* This)
 	}
 	case 4: // StartEventStand
 	{
+		for (StartData& data : ColorsPhysics::m_startStandingData)
+		{
+			data.reset();
+		}
 
+		startStandingIndex = (startStandingIndex + 1) % ColorsPhysics::m_startStandingData.size();
+		char const* animationName = ColorsPhysics::m_startStandingData[startStandingIndex].m_animationName.c_str();
+		WRITE_MEMORY(0xDFD2C2, char*, animationName);
 		break;
 	}
 	}
@@ -208,6 +217,23 @@ HOOK(void, __fastcall, ColorsPhysics_CSonicStateStartCrouchingAdvance, 0xDEF180,
 	originalColorsPhysics_CSonicStateStartCrouchingAdvance(This);
 }
 
+HOOK(void, __fastcall, ColorsPhysics_CSonicStateStartStandingAdvance, 0xDEE070, hh::fnd::CStateMachineBase::CStateBase* This)
+{
+	auto* context = (Sonic::Player::CPlayerSpeedContext*)This->GetContextBase();
+
+	StartData& data = ColorsPhysics::m_startStandingData[startStandingIndex];
+	for (StartSoundData& soundData : data.m_soundData)
+	{
+		if (!soundData.m_played && This->m_Time >= soundData.m_soundTiming)
+		{
+			soundData.m_played = true;
+			context->PlaySound(soundData.m_cueID, 1);
+		}
+	}
+
+	originalColorsPhysics_CSonicStateStartStandingAdvance(This);
+}
+
 void ColorsPhysics::applyPatches()
 {
 	static float homingDummyAfterSpeedMultiplier = 0.8f;
@@ -226,7 +252,6 @@ void ColorsPhysics::applyPatches()
 	WRITE_NOP(0xDFB32D, 2);
 	WRITE_NOP(0xDFB39A, 2);
 
-	// StartCrouchingData
 	m_startCrouchingData =
 	{
 		{
@@ -248,9 +273,29 @@ void ColorsPhysics::applyPatches()
 		},
 	};
 
+	m_startStandingData =
+	{
+		{
+			"StartEventStand", {}
+		},
+		{
+			// sn_start_wait00_sv
+			"StartEventStand2",
+			{
+				{ 1.280f, 5002105, false },
+				{ 1.877f, 5002106, false },
+				{ 2.378f, 5002107, false },
+				{ 0.740f, 5002108, false },
+				{ 0.731f, 5002109, false },
+			}
+		},
+	};
+
 	// Start animation sfx
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 	startCrouchingIndex = std::rand() % ColorsPhysics::m_startCrouchingData.size();
+	startStandingIndex = std::rand() % ColorsPhysics::m_startStandingData.size();
 	INSTALL_HOOK(ColorsPhysics_StartSequence);
 	INSTALL_HOOK(ColorsPhysics_CSonicStateStartCrouchingAdvance);
+	INSTALL_HOOK(ColorsPhysics_CSonicStateStartStandingAdvance);
 }
