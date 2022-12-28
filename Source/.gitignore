@@ -1,2 +1,3 @@
-# Ignore non-HE games.
-diva/
+# Ignore testing projects.
+bb/BlueBlurPlayground
+rangers/RangersPlayground
