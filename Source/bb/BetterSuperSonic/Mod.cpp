@@ -4,7 +4,7 @@ bool bpcTransformed = false;
 
 HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPlayerSpeed* This, void* _, const hh::fnd::SUpdateInfo& updateInfo)
 {
-	// TODO: Check save file for if the player has beaten the final boss
+	// TODO: Check save file if the final boss has been beaten
 	const bool beatBLB = true;
 
 	// CONFIG: Hidden configuration option, set to false for the code to always execute
@@ -34,16 +34,16 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	const bool isSuper = context->StateFlag(eStateFlag_InvokeSuperSonic);
 	const bool isOutOfControl = context->StateFlag(eStateFlag_OutOfControl);
 	const bool isGoal = context->StateFlag(eStateFlag_Goal);
-	const bool isWisp = strstr(stateName.c_str(), "Rocket") || strstr(stateName.c_str(), "Spike");
+	const bool isWisp = strstr(stateName.c_str(), "Rocket") || strstr(stateName.c_str(), "Spike"); // canTransform only
 	const bool isTransforming = strstr(stateName.c_str(), "Transform");
-	const bool isGrinding = strstr(stateName.c_str(), "Grind");
-	const bool isDiving = strstr(stateName.c_str(), "Diving");
+	const bool isGrinding = strstr(stateName.c_str(), "Grind"); // canTransform only
+	const bool isDiving = strstr(stateName.c_str(), "Diving"); // canTransform only
 	const bool isDead = strstr(stateName.c_str(), "Dead");
 	const bool isModern = *(uint32_t*)This == 0x16D4B2C;
 	const bool hasSpSkill = skills & 0x1000;
 
-	// Check if the player can go super based on certain conditions
-	// TODO: Use the same check that the game uses for whether or not the player can use a skill
+	// Check if super can be activated based on certain conditions
+	// TODO: Use the same check that the game uses for whether or not a skill can be used
 	const bool canTransform = !isOutOfControl && !isGoal && !isWisp && !isTransforming && !isGrinding && !isDiving && stateName != "HangOn" && stateName != "ExternalControl";
 
 #if _DEBUG
@@ -70,6 +70,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 
 	DebugDrawText::log(format("%s Sonic", isModern ? "Modern" : "Classic"));
 	DebugDrawText::log(format("State Name: %s", stateName.c_str()));
+	DebugDrawText::log(format("Pressed Y: %s", padState.IsDown(Sonic::eKeyState_Y) ? "true" : "false"));
 	DebugDrawText::log(format("Can Transform: %s", canTransform ? "true" : "false"));
 	DebugDrawText::log(format("Has Skill: %s", hasSpSkill ? "true" : "false"));
 	DebugDrawText::log(format("Super Sonic: %s", isSuper ? "true" : "false"));
@@ -77,7 +78,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	DebugDrawText::log(format("Boost Amount: %.0f", boostAmount));
 #endif
 
-	// CONFIG: Super Sonic in Perfect Chaos boss
+	// CONFIG: Super in Perfect Chaos boss
 	if (isBPC && !isOutOfControl)
 	{
 		if (!isSuper && !isTransforming && !bpcTransformed && !isDead)
@@ -99,7 +100,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	else if (bpcTransformed)
 		bpcTransformed = false;
 
-	// CONFIG: Allow user to transform into super at any time
+	// CONFIG: Allow super transformation at any time
 	if (padState.IsTapped(Sonic::eKeyState_Y) && canTransform)
 	{
 		if (!hasSpSkill && !isSuper && ringCount >= 50 && !Configuration::skillOnly)
@@ -122,7 +123,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 		}
 	}
 
-	// TODO: Revert some animations being replaced by his floating anim
+	// TODO: Revert some animations being replaced by the floating anim
 	//       - Probably will require ArchiveTreePatcher shenagigans
 
 	// Update original function
@@ -140,6 +141,17 @@ extern "C" __declspec(dllexport) void Init()
 	{
 		MessageBox(nullptr, TEXT("Failed to load the config file!\nPlease make sure that BetterSuperSonic.ini exists in the mod's folder."),
 			TEXT("Better Super Sonic"), MB_ICONERROR);
+
+		exit(-1);
+	}
+
+	// CONFIG: Allow user to transform into super at any time (HUD indication)
+	// TODO: Make it disappear if Super is activated
+	if (!Configuration::skillOnly)
+	{
+		WRITE_MEMORY(0xE632F2, uint8_t, 0xEB, 0x0C);
+		WRITE_MEMORY(0xE63300, uint8_t, 0xEB, 0x0B);
+		WRITE_MEMORY(0xE6331B, uint8_t, 0xEB, 0x0C);
 	}
 
 	INSTALL_HOOK(CPlayerSpeedUpdateParallel);
