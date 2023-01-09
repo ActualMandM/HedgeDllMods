@@ -145,7 +145,7 @@ extern "C" __declspec(dllexport) void Init()
 		exit(-1);
 	}
 
-	// CONFIG: Allow user to transform into super at any time (HUD indication)
+	// CONFIG: Allow super transformation at any time (HUD indication)
 	// TODO: Make it disappear if Super is activated
 	if (!Configuration::skillOnly)
 	{
