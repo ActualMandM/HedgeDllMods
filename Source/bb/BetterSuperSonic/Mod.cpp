@@ -143,10 +143,15 @@ extern "C" __declspec(dllexport) void Init()
 	}
 
 	// Patch "Decrease Super Sonic Rings Every Second" by brianuuu
-	// TODO: Make this work for Classic as well
+
+	// Modern
 	WRITE_MEMORY(0x11D6807, uint8_t, 0xC7, 0x47, 0x64);
 	WRITE_MEMORY(0x11D680A, float, 1.0f);
 	WRITE_MEMORY(0x11D680E, uint8_t, 0xEB, 0x1D);
+	// Classic
+	WRITE_MEMORY(0x11D33BC, uint8_t, 0xC7, 0x47, 0x64);
+	WRITE_MEMORY(0x11D33BF, float, 1.0f);
+	WRITE_MEMORY(0x11D33C3, uint8_t, 0xEB, 0x0C);
 
 	// Patch "Disable Super Sonic Floating Boost" by Skyth
 	WRITE_MEMORY(0xDFF34C, uint8_t, 0xEB); // Ground Boost
