@@ -142,20 +142,5 @@ extern "C" __declspec(dllexport) void Init()
 			TEXT("Better Super Sonic"), MB_ICONERROR);
 	}
 
-	// Patch "Decrease Super Sonic Rings Every Second" by brianuuu
-
-	// Modern
-	WRITE_MEMORY(0x11D6807, uint8_t, 0xC7, 0x47, 0x64);
-	WRITE_MEMORY(0x11D680A, float, 1.0f);
-	WRITE_MEMORY(0x11D680E, uint8_t, 0xEB, 0x1D);
-	// Classic
-	WRITE_MEMORY(0x11D33BC, uint8_t, 0xC7, 0x47, 0x64);
-	WRITE_MEMORY(0x11D33BF, float, 1.0f);
-	WRITE_MEMORY(0x11D33C3, uint8_t, 0xEB, 0x0C);
-
-	// Patch "Disable Super Sonic Floating Boost" by Skyth
-	WRITE_MEMORY(0xDFF34C, uint8_t, 0xEB); // Ground Boost
-	WRITE_MEMORY(0xDFE04C, uint8_t, 0xEB); // Air Boost
-
 	INSTALL_HOOK(CPlayerSpeedUpdateParallel);
 }
