@@ -1,6 +1,6 @@
 #include "Configuration.h"
 
-TunicType Configuration::tunicType = TunicType::Green;
+std::string Configuration::tunicType = "Green";
 
 bool Configuration::load(const std::string& filePath)
 {
@@ -9,7 +9,7 @@ bool Configuration::load(const std::string& filePath)
 	if (reader.ParseError() != 0)
 		return false;
 
-	tunicType = (TunicType)reader.GetInteger("Appearance", "TunicType", TunicType::Green);
+	tunicType = reader.Get("Appearance", "TunicType", "Green");
 
 	return true;
 }
