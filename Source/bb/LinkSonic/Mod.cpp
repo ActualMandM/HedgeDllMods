@@ -10,6 +10,12 @@ extern "C" __declspec(dllexport) void Init()
 			TEXT("Link Sonic"), MB_ICONERROR);
 	}
 
+	// Fallback to green for previous versions
+	if (std::isdigit(Configuration::tunicType.c_str()[0]))
+	{
+		Configuration::tunicType = "Green";
+	}
+
 	// TunicType configuration
 	ArchiveTreePatcher::m_archiveDependencies.push_back(ArchiveDependency("Appearance" + Configuration::tunicType,
 		{ "LinkSonic", "LinkSonicEGB", "PBRSonic" }));
