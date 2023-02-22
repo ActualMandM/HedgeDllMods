@@ -20,7 +20,7 @@ enum Results
 	BlackKnight = 14,
 	S4E1 = 15,
 	Colors = 16,
-	// ColorsBoss = 17,
+	Frontiers = 17,
 	S4E2 = 18,
 	LostWorld = 19,
 	Mania = 20,
@@ -35,7 +35,12 @@ enum Results
 	Custom2 = 29,
 	Rush = 30,
 	RushAdventure = 31,
-	ColorsSim = 32
+	ColorsSim = 32,
+	FrontiersQuest = 33,
+	FrontiersHack = 34,
+	DIVAAC = 35,
+	DIVAACB = 36,
+	DIVAFT = 37
 };
 
 enum SRank

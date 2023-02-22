@@ -28,7 +28,7 @@ const char* resultsChar[] =
 	"BlackKnight",
 	"S4E1",
 	"Colors",
-	"ColorsBoss", // Unused (until repurposed)
+	"Frontiers",
 	"S4E2",
 	"LostWorld",
 	"Mania",
@@ -43,7 +43,12 @@ const char* resultsChar[] =
 	"Custom2",
 	"Rush",
 	"RushAdventure",
-	"ColorsSim"
+	"ColorsSim",
+	"FrontiersQuest",
+	"FrontiersHack",
+	"DIVAAC",
+	"DIVAACB",
+	"DIVAFT"
 };
 
 resultData modernResults;
@@ -109,6 +114,19 @@ resultData PrepareResults(bool isModern)
 			hasERank = true;
 			break;
 		}
+		case Frontiers:
+		{
+			clearLength = 0.0;
+			break;
+		}
+		case DIVAAC:
+		case DIVAACB:
+		case DIVAFT:
+		{
+			clearLength = 0.0;
+			hasERank = true;
+			break;
+		}
 		case SmashBros:
 		{
 			clearLength = 7.631;
@@ -117,7 +135,7 @@ resultData PrepareResults(bool isModern)
 		case Custom:
 		{
 			if (Configuration::CustomOnlyRC)
-				clearLength = -1;
+				clearLength = -1.0;
 			else
 				clearLength = (double)Configuration::CustomDuration;
 
@@ -130,7 +148,7 @@ resultData PrepareResults(bool isModern)
 		case Custom2:
 		{
 			if (Configuration::Custom2OnlyRC)
-				clearLength = -1;
+				clearLength = -1.0;
 			else
 				clearLength = (double)Configuration::Custom2Duration;
 
