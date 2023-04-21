@@ -93,6 +93,11 @@ inline uint32_t readUnalignedU32(void* memory)
 	return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
 }
 
+inline void rangersVersionWarning(LPCTSTR modName)
+{
+	MessageBox(nullptr, TEXT("Failed to initialize! Please make sure that Sonic Frontiers is on v1.20 and try again."), modName, MB_ICONERROR);
+}
+
 // From brianuuu's Common.h (https://github.com/brianuuu/DllMods/blob/785b18899efc8824e769db904372da2660f97c1f/Dependencies/Common.h)
 namespace Helpers
 {

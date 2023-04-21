@@ -80,5 +80,12 @@ HOOK(int64_t, __fastcall, LoadAsset, m_SigLoadAsset(), int64_t a1, const char* i
 
 extern "C" __declspec(dllexport) void Init()
 {
-	INSTALL_HOOK(LoadAsset);
+	if (sigValid)
+	{
+		INSTALL_HOOK(LoadAsset);
+	}
+	else
+	{
+		rangersVersionWarning(TEXT("Infinite"));
+	}
 }
