@@ -1,6 +1,9 @@
 #include <StringHelper.h>
 #include "PlayerParameters.h"
 
+inline float luminance = 0.8;
+inline float luminanceFlash = 0.5;
+
 void changeColorF(colorF& color, float red, float green, float blue)
 {
 	color.red = red;
@@ -12,27 +15,27 @@ void changeCyloopColor(CyloopLocusParameter& locus)
 {
 	for (int i = 0; i < locus.m_numTransparentLines; i++)
 	{
-		CyloopTransparentLocusParameter& trasparentLine = locus.m_transparentLines[i];
+		auto& transparentLine = locus.m_transparentLines[i];
 
-		changeColorF(trasparentLine.m_color0, 1, 0.05, 0.05);
-		changeColorF(trasparentLine.m_color1, 1, 0.05, 0.05);
+		changeColorF(transparentLine.m_color0, 1, 0.05, 0.05);
+		changeColorF(transparentLine.m_color1, 1, 0.05, 0.05);
 
-		changeColorF(trasparentLine.m_flashColor0, 0.7, 0.05, 0.2);
-		changeColorF(trasparentLine.m_flashColor1, 0.7, 0.05, 0.2);
+		changeColorF(transparentLine.m_flashColor0, 0.7, 0.05, 0.2);
+		changeColorF(transparentLine.m_flashColor1, 0.7, 0.05, 0.2);
 
-		trasparentLine.m_luminance = 0.8;
-		trasparentLine.m_flashLuminance = 0.5;
+		transparentLine.m_luminance = luminance;
+		transparentLine.m_flashLuminance = luminanceFlash;
 	}
 
 	for (int i = 0; i < locus.m_numOpaqueLines; i++)
 	{
-		CyloopOpaqueLocusParameter& opaqueLine = locus.m_opaqueLines[i];
+		auto& opaqueLine = locus.m_opaqueLines[i];
 
 		changeColorF(opaqueLine.m_color, 1, 0.05, 0.05);
 		changeColorF(opaqueLine.m_flashColor, 0.7, 0.05, 0.2);
 	}
 
-	CyloopCrossLineParameter& crossLine = locus.m_crossline;
+	auto& crossLine = locus.m_crossline;
 	{
 		changeColorF(crossLine.startColor, 1, 0, 0);
 		changeColorF(crossLine.endColor, 0.9, 0.1, 0.1);
@@ -40,11 +43,11 @@ void changeCyloopColor(CyloopLocusParameter& locus)
 		changeColorF(crossLine.startColorFlash, 0.7, 0, 0.2);
 		changeColorF(crossLine.endColorFlash, 0.6, 0.1, 0.1);
 
-		crossLine.startColorLuminance = 0.8;
-		crossLine.endColorLuminance = 0.8;
+		crossLine.startColorLuminance = luminance;
+		crossLine.endColorLuminance = luminance;
 
-		crossLine.startColorLuminanceFlash = 0.5;
-		crossLine.endColorLuminanceFlash = 0.5;
+		crossLine.startColorLuminanceFlash = luminanceFlash;
+		crossLine.endColorLuminanceFlash = luminanceFlash;
 	}
 }
 
@@ -66,7 +69,7 @@ HOOK(int64_t, __fastcall, LoadAsset, m_SigLoadAsset(), int64_t a1, const char* i
 
 		if (playerParameter)
 		{
-			PlayerParamCyloop& cyloop = playerParameter->common.cyloop;
+			auto& cyloop = playerParameter->common.cyloop;
 
 			changeCyloopColor(cyloop.locus);
 			changeCyloopColor(cyloop.locusQuick);
