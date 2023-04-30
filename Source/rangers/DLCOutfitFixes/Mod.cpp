@@ -28,7 +28,7 @@ auto m_LoadResModel = READ_CALL(m_SigSonicAuraVisibility() + 0x11);
 
 HOOK(__int64, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName, __int64 a2)
 {
-	if (outfit != 0 && StringHelper::ContainsSubstring(in_modelName, "chr_"))
+	if ((outfit > 0 && outfit < 7) && StringHelper::ContainsSubstring(in_modelName, "chr_"))
 	{
 		uint8_t modelIdx = outfit - 1;
 
