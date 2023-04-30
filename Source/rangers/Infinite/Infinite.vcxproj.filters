@@ -4,9 +4,13 @@
     <ClCompile Include="Pch.cpp" />
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="Mod.cpp" />
+    <ClCompile Include="CyloopManager.cpp" />
+    <ClCompile Include="TextManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="PlayerParameters.h" />
+    <ClInclude Include="CyloopManager.h" />
+    <ClInclude Include="TextManager.h" />
   </ItemGroup>
 </Project>

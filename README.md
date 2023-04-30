@@ -15,5 +15,5 @@ A repository hosting DLL source code for Hedgehog Engine mods.
   - [PlayStation Prompts](Source/bb/PlayStationPrompts)
   - [Lost World Eyes](Source/bb/SLWEyes)
 - Sonic Frontiers
-  - [Infinite](Source/rangers/Infinite)
   - [DLC Outfit Fixes](Source/rangers/DLCOutfitFixes)
+  - [Infinite](Source/rangers/Infinite)

@@ -26,7 +26,7 @@ SIG_SCAN
 
 auto m_LoadResModel = READ_CALL(m_SigSonicAuraVisibility() + 0x11);
 
-HOOK(__int64, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName, __int64 a2)
+HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName, int64_t a2)
 {
 	if ((outfit > 0 && outfit < 7) && StringHelper::ContainsSubstring(in_modelName, "chr_"))
 	{

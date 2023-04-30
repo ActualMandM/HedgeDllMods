@@ -75,6 +75,26 @@ public:
 	}
 
 	/// <summary>
+	/// Checks if the string contains substrings.
+	/// </summary>
+	/// <param name="str">String to check.</param>
+	/// <returns>Boolean result - true if it contains a substring, false if not.</returns>
+	static bool ContainsSubstrings(std::string str1, std::string str2[], int len)
+	{
+		bool hasSubstring = false;
+
+		for (int i = 0; i < len; i++)
+		{
+			if (!hasSubstring)
+			{
+				hasSubstring = ContainsSubstring(str1, str2[i]);
+			}
+		}
+
+		return hasSubstring;
+	}
+
+	/// <summary>
 	/// Checks if the string contains numbers.
 	/// </summary>
 	/// <param name="str">String to check.</param>
