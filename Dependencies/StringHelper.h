@@ -227,4 +227,30 @@ public:
 
 		return result;
 	}
+
+	static const wchar_t* CharToWideChar(const char* charArray)
+	{
+		const int len = strlen(charArray) + 1;
+		wchar_t* wstr = new wchar_t[len];
+
+		mbstowcs(wstr, charArray, len);
+
+		const wchar_t* result(wstr);
+		delete[] wstr;
+
+		return result;
+	}
+
+	static const char* WideCharToChar(const wchar_t* wCharArray)
+	{
+		const int len = wcslen(wCharArray) + 1;
+		char* cstr = new char[len];
+
+		wcstombs(cstr, wCharArray, len);
+
+		const char* result(cstr);
+		delete[] cstr;
+
+		return result;
+	}
 };
