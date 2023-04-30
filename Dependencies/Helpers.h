@@ -87,10 +87,17 @@ const HMODULE MODULE_HANDLE = GetModuleHandle(nullptr);
 
 #define ASMHOOK void __declspec(naked)
 
+#define READ_CALL(addr) ((int64_t)addr + *(int32_t*)((int64_t)addr + 1)) + 5
+
 inline uint32_t readUnalignedU32(void* memory)
 {
 	uint8_t* p = (uint8_t*)memory;
 	return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
+}
+
+inline void* getAddress(uint8_t* instrAddr, uint8_t addrOffset, uint8_t instrLen)
+{
+	return (uint32_t*)(instrAddr + readUnalignedU32(instrAddr + addrOffset) + instrLen);
 }
 
 inline void rangersVersionWarning(LPCTSTR modName)
