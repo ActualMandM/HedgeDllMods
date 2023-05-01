@@ -8,39 +8,39 @@ SIG_SCAN
 	"xxxx?xxxx?xxxx?xxxx?xxxxxxxxxxxxx"
 );
 
-std::string blacklist[] = { "Boom", "Adventure", "Frontiers" };
+std::wstring blacklist[] = { L"Boom", L"Adventure", L"Frontiers" };
 
 HOOK(int64_t, __fastcall, LoadText, m_LoadText(), int64_t a1, const wchar_t* in_textData, int in_textLength)
 {
 	bool textChanged = false;
 
-	std::string textData = StringHelper::WideCharToString(in_textData);
+	std::wstring textData = in_textData;
 
 	bool isBlacklisted = StringHelper::ContainsSubstrings(textData, blacklist, sizeof(blacklist) / sizeof(blacklist[0]));
 
-	if (StringHelper::ContainsSubstring(textData, "Sonic") && !isBlacklisted)
+	if (StringHelper::ContainsSubstring(textData, L"Sonic") && !isBlacklisted)
 	{
-		textData = std::regex_replace(textData, std::regex("Super Sonic"), "Phantom Infinite");
-		textData = std::regex_replace(textData, std::regex("Sonic"), "Infinite");
+		textData = std::regex_replace(textData, std::wregex(L"Super Sonic"), L"Phantom Infinite");
+		textData = std::regex_replace(textData, std::wregex(L"Sonic"), L"Infinite");
 
-		if (StringHelper::ContainsSubstring(textData, "Inugami"))
+		if (StringHelper::ContainsSubstring(textData, L"Inugami"))
 		{
-			textData = "Inugami Korone Palette";
+			textData = L"Inugami Korone Palette";
 		}
 
 		textChanged = true;
 	}
 
-	if (StringHelper::ContainsSubstring(textData, "Rathalos"))
+	if (StringHelper::ContainsSubstring(textData, L"Rathalos"))
 	{
-		textData.append(" (unimplemented)");
+		textData.append(L" (unimplemented)");
 		textChanged = true;
 	}
 
 	if (textChanged)
 	{
-		in_textData = StringHelper::CharToWideChar(textData.c_str());
-		in_textLength = strlen(textData.c_str());
+		in_textData = textData.c_str();
+		in_textLength = textData.size();
 	}
 
 	return originalLoadText(a1, in_textData, in_textLength);
