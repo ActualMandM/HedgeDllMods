@@ -28,24 +28,24 @@ auto m_LoadResModel = READ_CALL(m_SigSonicAuraVisibility() + 0x11);
 
 HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName, int64_t a2)
 {
-	if ((outfit > 0 && outfit < 7) && StringHelper::ContainsSubstring(in_modelName, "chr_"))
+	if ((outfit > 0 && outfit <= MAX_OUTFIT) && StringHelper::ContainsSubstring(in_modelName, "chr_"))
 	{
 		uint8_t modelIdx = outfit - 1;
 
 		if (!strcmp(in_modelName, "chr_sonic_aura"))
-			in_modelName = auraNames[modelIdx];
+			in_modelName = GetModelName(modelIdx, "sonic", "aura");
 
 		if (!strcmp(in_modelName, "chr_sonic_shape"))
-			in_modelName = shapeNames[modelIdx];
+			in_modelName = GetModelName(modelIdx, "sonic", "shape");
 
 		if (!strcmp(in_modelName, "chr_supersonic"))
-			in_modelName = superNames[modelIdx];
+			in_modelName = GetModelName(modelIdx, "supersonic", nullptr);
 
 		if (!strcmp(in_modelName, "chr_supersonic_aura"))
-			in_modelName = superAuraNames[modelIdx];
+			in_modelName = GetModelName(modelIdx, "supersonic", "aura");
 
 		if (!strcmp(in_modelName, "chr_supersonic_shape"))
-			in_modelName = superShapeNames[modelIdx];
+			in_modelName = GetModelName(modelIdx, "supersonic", "shape");
 	}
 
 	return originalLoadResModel(in_modelName, a2);
