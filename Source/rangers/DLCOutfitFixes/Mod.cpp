@@ -24,7 +24,7 @@ SIG_SCAN
 	"xxxxxxxxxxxxx????x????xxxx"
 );
 
-auto m_LoadResModel = READ_CALL(m_SigSonicAuraVisibility() + 0x11);
+auto m_LoadResModel = READ_CALL(m_SigSonicAuraVisibility() - 0x1A);
 
 HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName, int64_t a2)
 {
