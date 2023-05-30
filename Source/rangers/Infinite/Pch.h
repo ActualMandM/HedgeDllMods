@@ -15,5 +15,5 @@
 
 // Other
 #include <Helpers.h>
-#include <SignatureCL.h>
+#include <Signature.h>
 #include <StringHelper.h>
