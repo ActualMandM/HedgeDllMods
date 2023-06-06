@@ -13,7 +13,11 @@
 #include <vector>
 #include <sstream>
 
+// LostCodeLoader
+#include <LostCodeLoader.h>
+
 // Other
 #include <Helpers.h>
+#include <RegistryHelper.h>
 #include <Signature.h>
 #include <StringHelper.h>

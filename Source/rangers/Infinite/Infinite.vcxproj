@@ -177,6 +177,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Configuration.cpp" />
     <ClCompile Include="CyloopManager.cpp" />
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="Mod.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="TextManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Configuration.h" />
     <ClInclude Include="CyloopManager.h" />
     <ClInclude Include="Pch.h" />
     <ClInclude Include="PlayerParameters.h" />

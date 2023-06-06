@@ -6,11 +6,13 @@
     <ClCompile Include="Mod.cpp" />
     <ClCompile Include="CyloopManager.cpp" />
     <ClCompile Include="TextManager.cpp" />
+    <ClCompile Include="Configuration.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="PlayerParameters.h" />
     <ClInclude Include="CyloopManager.h" />
     <ClInclude Include="TextManager.h" />
+    <ClInclude Include="Configuration.h" />
   </ItemGroup>
 </Project>
