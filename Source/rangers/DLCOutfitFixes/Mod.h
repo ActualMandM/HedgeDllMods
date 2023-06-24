@@ -2,7 +2,7 @@
 
 #include <StringHelper.h>
 
-inline const int MAX_OUTFIT = 6;
+inline const int MAX_OUTFIT = 8;
 
 const char* dlcNames[MAX_OUTFIT][2] = {
 	{ "dlcddx", "explorer" },
@@ -10,7 +10,9 @@ const char* dlcNames[MAX_OUTFIT][2] = {
 	{ "dlcmhr", "airou" },
 	{ "dlcholoA", "korone" },
 	{ "dlccrm", "advshoes" },
-	{ "dlcxmas", "xmas" }
+	{ "dlcxmas", "xmas" },
+	{ "chr", "birthday" },
+	{ "chr", "crown" }
 };
 
 const char* GetModelName(uint8_t outfit, const char* model, const char* type)
