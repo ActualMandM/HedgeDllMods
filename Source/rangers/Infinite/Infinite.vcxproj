@@ -197,7 +197,7 @@
     <ClInclude Include="Configuration.h" />
     <ClInclude Include="CyloopManager.h" />
     <ClInclude Include="Pch.h" />
-    <ClInclude Include="PlayerParameters.h" />
+    <ClInclude Include="SonicParameters.h" />
     <ClInclude Include="TextManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

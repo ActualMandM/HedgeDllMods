@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PlayerParameters.h"
+#include "SonicParameters.h"
 
 class CyloopManager
 {

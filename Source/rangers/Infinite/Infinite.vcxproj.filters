@@ -10,7 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
-    <ClInclude Include="PlayerParameters.h" />
+    <ClInclude Include="SonicParameters.h" />
     <ClInclude Include="CyloopManager.h" />
     <ClInclude Include="TextManager.h" />
     <ClInclude Include="Configuration.h" />

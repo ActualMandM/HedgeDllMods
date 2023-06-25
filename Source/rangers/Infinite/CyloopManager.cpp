@@ -63,11 +63,11 @@ HOOK(int64_t, __fastcall, LoadAsset, m_SigLoadAsset(), int64_t a1, const char* i
 
 	if (StringHelper::Compare(*in_resourceType, "ResReflection") && StringHelper::Compare(in_assetName, "player_common"))
 	{
-		auto playerParameter = reinterpret_cast<PlayerParameters*>(*(int64_t*)(result + 0x60));
+		auto sonicParameter = reinterpret_cast<SonicParameters*>(*(int64_t*)(result + 0x60));
 
-		if (playerParameter)
+		if (sonicParameter)
 		{
-			auto& cyloop = playerParameter->common.cyloop;
+			auto& cyloop = sonicParameter->common.cyloop;
 
 			CyloopManager::changeCyloopColor(cyloop.locus);
 			CyloopManager::changeCyloopColor(cyloop.locusQuick);
