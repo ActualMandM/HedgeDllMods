@@ -56,11 +56,11 @@ extern "C" __declspec(dllexport) void Init()
 		WRITE_NOP(m_SigSonicAuraVisibility(), 8);
 		INSTALL_HOOK(GetCurrentOutfit);
 
-		printf("[DLC Outfit Fixes] m_LoadResModel: 0x%llx\n", m_LoadResModel);
+		printf("[Sonic Outfit Fixes] m_LoadResModel: 0x%llx\n", m_LoadResModel);
 		INSTALL_HOOK(LoadResModel);
 	}
 	else
 	{
-		rangersVersionWarning(TEXT("DLC Outfit Fixes"));
+		rangersVersionWarning(TEXT("Sonic Outfit Fixes"));
 	}
 }

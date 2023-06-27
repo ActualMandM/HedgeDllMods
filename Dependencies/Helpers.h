@@ -116,7 +116,7 @@ inline void* getAddress(uint8_t* instrAddr, uint8_t addrOffset, uint8_t instrLen
 
 inline void rangersVersionWarning(LPCTSTR modName)
 {
-	MessageBox(nullptr, TEXT("Failed to initialize! Please make sure that Sonic Frontiers is on v1.20 and try again."), modName, MB_ICONERROR);
+	MessageBox(nullptr, TEXT("Failed to initialize! Please make sure that Sonic Frontiers is on v1.30 (Update 2) and try again."), modName, MB_ICONERROR);
 }
 
 // From brianuuu's Common.h (https://github.com/brianuuu/DllMods/blob/785b18899efc8824e769db904372da2660f97c1f/Dependencies/Common.h)
