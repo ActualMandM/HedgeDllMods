@@ -45,6 +45,18 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 		if (!strcmp(in_modelName, "chr_supersonic_shape"))
 			in_modelName = GetModelName(modelIdx, "supersonic", "shape");
 
+		if (!strcmp(in_modelName, "chr_supersonic_punch_L"))
+			in_modelName = GetModelName(modelIdx, "supersonic", "punch_L");
+
+		if (!strcmp(in_modelName, "chr_supersonic_punch_R"))
+			in_modelName = GetModelName(modelIdx, "supersonic", "punch_R");
+
+		if (!strcmp(in_modelName, "chr_supersonic_kick_L"))
+			in_modelName = GetModelName(modelIdx, "supersonic", "kick_L");
+
+		if (!strcmp(in_modelName, "chr_supersonic_kick_R"))
+			in_modelName = GetModelName(modelIdx, "supersonic", "kick_R");
+
 		if (!strcmp(in_modelName, "chr_supersonic2"))
 			in_modelName = GetModelName(modelIdx, "supersonic2", nullptr);
 	}
