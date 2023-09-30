@@ -44,6 +44,9 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 
 		if (!strcmp(in_modelName, "chr_supersonic_shape"))
 			in_modelName = GetModelName(modelIdx, "supersonic", "shape");
+
+		if (!strcmp(in_modelName, "chr_supersonic2"))
+			in_modelName = GetModelName(modelIdx, "supersonic2", nullptr);
 	}
 
 	return originalLoadResModel(in_modelName, a2);
