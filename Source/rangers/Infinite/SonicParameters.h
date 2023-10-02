@@ -217,7 +217,7 @@ typedef struct
 	/// <summary>
 	/// 属性
 	/// </summary>
-	uint16_t attributes;
+	uint32_t attributes;
 
 	/// <summary>
 	/// ヒットSE
@@ -514,14 +514,59 @@ typedef struct
 	PlayerParamAttackData knucklesUppercut;
 
 	/// <summary>
+	/// Knuckles MaximumHeatKnuckle
+	/// </summary>
+	PlayerParamAttackData knucklesHeatKnuckle;
+
+	/// <summary>
+	/// Knuckles MaximumHeatKnuckle Last
+	/// </summary>
+	PlayerParamAttackData knucklesHeatKnuckleLast;
+
+	/// <summary>
 	/// Amy Tarot Attack
 	/// </summary>
 	PlayerParamAttackData amyTarotAttack;
 
 	/// <summary>
+	/// Amy Tarot Attack2
+	/// </summary>
+	PlayerParamAttackData amyTarotAttack2;
+
+	/// <summary>
 	/// Amy Tarot Rolling
 	/// </summary>
 	PlayerParamAttackData amyTarotRolling;
+
+	/// <summary>
+	/// Amy Charm Attack
+	/// </summary>
+	PlayerParamAttackData amyCharmAttack;
+
+	/// <summary>
+	/// Tails Spanner
+	/// </summary>
+	PlayerParamAttackData tailsSpanner;
+
+	/// <summary>
+	/// Tails Spanner Float
+	/// </summary>
+	PlayerParamAttackData tailsSpannerFloat;
+
+	/// <summary>
+	/// Tails Power Boost
+	/// </summary>
+	PlayerParamAttackData tailsPowerBoost;
+
+	/// <summary>
+	/// Tails Wave Cannon
+	/// </summary>
+	PlayerParamAttackData tailsWaveCannon;
+
+	/// <summary>
+	/// Tails Wave Cannon Finish
+	/// </summary>
+	PlayerParamAttackData tailsWaveCannonFinish;
 
 } PlayerParamAttack;
 
@@ -733,6 +778,35 @@ typedef struct
 typedef struct
 {
 	/// <summary>
+	/// コンボメーター減少速度/通常
+	/// </summary>
+	float declineSpeed;
+
+	/// <summary>
+	/// コンボメーター減少速度/アクセルモード
+	/// </summary>
+	float declineSpeedAccele;
+
+	/// <summary>
+	/// 被ダメージ時の減少量/通常
+	/// </summary>
+	float lossDamaged;
+
+	/// <summary>
+	/// 被ダメージ時の減少量/アクセルモード
+	/// </summary>
+	float lossDamagedAccele;
+
+	/// <summary>
+	/// コンボ水増しレート/アクセルモード
+	/// </summary>
+	uint32_t comboRateAccele;
+
+} PlayerParamAcceleMode;
+
+typedef struct
+{
+	/// <summary>
 	/// ダメージ設定
 	/// </summary>
 	PlayerParamAttack attack;
@@ -777,36 +851,12 @@ typedef struct
 	/// </summary>
 	PlayerParamDamageRate damageRate;
 
+	/// <summary>
+	/// アクセルモード
+	/// </summary>
+	PlayerParamAcceleMode acceleMode;
+
 } CommonPackage;
-
-typedef struct
-{
-	/// <summary>
-	/// コンボメーター減少速度/通常
-	/// </summary>
-	float declineSpeed;
-
-	/// <summary>
-	/// コンボメーター減少速度/アクセルモード
-	/// </summary>
-	float declineSpeedAccele;
-
-	/// <summary>
-	/// 被ダメージ時の減少量/通常
-	/// </summary>
-	float lossDamaged;
-
-	/// <summary>
-	/// 被ダメージ時の減少量/アクセルモード
-	/// </summary>
-	float lossDamagedAccele;
-
-	/// <summary>
-	/// コンボ水増しレート/アクセルモード
-	/// </summary>
-	uint32_t comboRateAccele;
-
-} PlayerParamAcceleMode;
 
 enum Condition : int8_t
 {
@@ -1899,9 +1949,12 @@ enum Action : int8_t
 	KnucklesCyKnuckle = 33,
 	KnucklesHeatKnuckle = 34,
 	AmyTarotAttack = 35,
-	AmyTarotRolling = 36,
-	AmyCyHammer = 37,
-	ActionNum = 38,
+	AmyTarotAttack2 = 36,
+	AmyTarotRolling = 37,
+	AmyCyHammer = 38,
+	AmyCharmAttack = 39,
+	TailsSpanner = 40,
+	ActionNum = 41,
 };
 
 typedef struct
@@ -2091,6 +2144,11 @@ typedef struct
 	PlayerParamComboTransit amyTarotAttack;
 
 	/// <summary>
+	/// Amy TarotAttack2
+	/// </summary>
+	PlayerParamComboTransit amyTarotAttack2;
+
+	/// <summary>
 	/// Amy TarotRolling
 	/// </summary>
 	PlayerParamComboTransit amyTarotRolling;
@@ -2099,6 +2157,16 @@ typedef struct
 	/// Amy CyHammer
 	/// </summary>
 	PlayerParamComboTransit amyCyHammer;
+
+	/// <summary>
+	/// Amy CharmAttack
+	/// </summary>
+	PlayerParamComboTransit amyCharmAttack;
+
+	/// <summary>
+	/// Tails Spanner
+	/// </summary>
+	PlayerParamComboTransit tailsSpanner;
 
 } PlayerParamComboTransitTable;
 
@@ -2607,6 +2675,21 @@ typedef struct
 	/// </summary>
 	uint32_t skillPieceWeight;
 
+	/// <summary>
+	/// スキルピース(Amy)のウェイト値
+	/// </summary>
+	uint32_t skillPieceAmyWeight;
+
+	/// <summary>
+	/// スキルピース(Knuckles)のウェイト値
+	/// </summary>
+	uint32_t skillPieceKnucklesWeight;
+
+	/// <summary>
+	/// スキルピース(Tails)のウェイト値
+	/// </summary>
+	uint32_t skillPieceTailsWeight;
+
 } CyloopDropItemWeightParameter;
 
 typedef struct
@@ -2752,6 +2835,11 @@ typedef struct
 	/// </summary>
 	float recoveryQuickCyloopEnergyByTimeInMinigame;
 
+	/// <summary>
+	/// フレンズQuickCyloopのゲージのリング回復量
+	/// </summary>
+	float recoveryFriendsQuickCyloopEnergyByRing;
+
 } PlayerParamCyloop;
 
 enum Part : int8_t
@@ -2827,6 +2915,11 @@ typedef struct
 	/// 移動SEを鳴らし始める速度
 	/// </summary>
 	float moveSoundSpeed;
+
+	/// <summary>
+	/// スパソニ2のオーラカラー
+	/// </summary>
+	colorF auraColor2;
 
 	/// <summary>
 	/// 残像エフェクト設定
@@ -3038,12 +3131,26 @@ typedef struct
 
 typedef struct
 {
-		 CommonPackage commonPackage;
+	/// <summary>
+	/// 危険度低の半径
+	/// </summary>
+	float radiusLow;
 
 	/// <summary>
-	/// アクセルモード
+	/// 危険度中の半径
 	/// </summary>
-	PlayerParamAcceleMode acceleMode;
+	float radiusMedium;
+
+	/// <summary>
+	/// 危険度高の半径
+	/// </summary>
+	float radiusHigh;
+
+} PlayerParamMine;
+
+typedef struct
+{
+		 CommonPackage commonPackage;
 
 	/// <summary>
 	/// 攻撃Act / Accele Combo
@@ -3139,6 +3246,11 @@ typedef struct
 	/// コダマ担ぎ歩き
 	/// </summary>
 	PlayerParamRunWithKodama runWithKodama;
+
+	/// <summary>
+	/// 地雷
+	/// </summary>
+	PlayerParamMine mine;
 
 } CommonPackageSonic;
 
@@ -4009,6 +4121,50 @@ typedef struct
 typedef struct
 {
 	/// <summary>
+	/// ジャンプ速度
+	/// </summary>
+	Vector3 jumpVelocity;
+
+	/// <summary>
+	/// 重力サイズ
+	/// </summary>
+	float gravitySize;
+
+	/// <summary>
+	/// 予備無敵時間
+	/// </summary>
+	float invincibleTime;
+
+	/// <summary>
+	/// アクション禁止時間
+	/// </summary>
+	float noActionTime;
+
+	/// <summary>
+	/// 落下時重力サイズ
+	/// </summary>
+	float gravitySizeForFall;
+
+	/// <summary>
+	/// 最高落下速度
+	/// </summary>
+	float maxFallSpeed;
+
+	/// <summary>
+	/// 爆発時カメラ振動名
+	/// </summary>
+	cstring cameraShakeName;
+
+	/// <summary>
+	/// 爆発時コントローラ振動名
+	/// </summary>
+	cstring vibrationName;
+
+} PlayerParamDamageMine;
+
+typedef struct
+{
+	/// <summary>
 	/// 共通
 	/// </summary>
 	PlayerParamDamageCommon common;
@@ -4052,6 +4208,11 @@ typedef struct
 	/// 溶岩
 	/// </summary>
 	PlayerParamDamageLava lava;
+
+	/// <summary>
+	/// 地雷
+	/// </summary>
+	PlayerParamDamageMine mine;
 
 } PlayerParamDamage;
 
@@ -5551,12 +5712,22 @@ typedef struct
 	/// <summary>
 	/// 最大受付時間
 	/// </summary>
-	float maxRecieveTime;
+	float maxRecieveTimes[4];
+
+	/// <summary>
+	/// ジャストパリィ受付時間
+	/// </summary>
+	float justRecieveTimes[4];
 
 	/// <summary>
 	/// 失敗時硬直時間
 	/// </summary>
 	float frozenTime;
+
+	/// <summary>
+	/// ジャストパリィ時の失敗時硬直時間
+	/// </summary>
+	float justFrozenTime;
 
 	/// <summary>
 	/// 短エフェクト開始補間時間
@@ -5587,6 +5758,26 @@ typedef struct
 	/// 長エフェクト時間
 	/// </summary>
 	float justEffectTime2;
+
+	/// <summary>
+	/// 試練用エフェクト開始補間時間
+	/// </summary>
+	float justEffectEasein3;
+
+	/// <summary>
+	/// 試練用エフェクト終了補間時間
+	/// </summary>
+	float justEffectEaseout3;
+
+	/// <summary>
+	/// 試練用エフェクト時間
+	/// </summary>
+	float justEffectTime3;
+
+	/// <summary>
+	/// カメラ名
+	/// </summary>
+	cstring cameraName;
 
 } PlayerParamParry;
 
@@ -6965,6 +7156,49 @@ typedef struct
 typedef struct
 {
 	/// <summary>
+	/// 初速
+	/// </summary>
+	float initial;
+
+	/// <summary>
+	/// 最低速度
+	/// </summary>
+	float min;
+
+	/// <summary>
+	/// 最高速度
+	/// </summary>
+	float max;
+
+	/// <summary>
+	/// 旋回中速度
+	/// </summary>
+	float minTurn;
+
+} PlayerCyberModeSpeedParam;
+
+typedef struct
+{
+	/// <summary>
+	/// 速度
+	/// </summary>
+	PlayerCyberModeSpeedParam speed;
+
+	/// <summary>
+	/// 速度/パワーブースト
+	/// </summary>
+	PlayerCyberModeSpeedParam speedPowerBoost;
+
+	/// <summary>
+	/// ゲージ上昇速度
+	/// </summary>
+	float recoveryRate;
+
+} PlayerMaxSpeedChallengeLevelParam;
+
+typedef struct
+{
+	/// <summary>
 	/// 低重力モード/重力スケール
 	/// </summary>
 	float lowGravityScale;
@@ -6985,6 +7219,11 @@ typedef struct
 	float jerk;
 
 	/// <summary>
+	/// 最高速チャレンジモード/最低速扱いとする速度
+	/// </summary>
+	float minSpeedThreshold;
+
+	/// <summary>
 	/// 最高速チャレンジモード/最高速扱いとする速度
 	/// </summary>
 	float maxSpeedThreshold;
@@ -6993,6 +7232,26 @@ typedef struct
 	/// 最高速チャレンジモード/ゲージ回復速度
 	/// </summary>
 	float recoveryRate;
+
+	/// <summary>
+	/// 最高速チャレンジモード/最高速度
+	/// </summary>
+	float maxSpeed;
+
+	/// <summary>
+	/// 最高速チャレンジモード/最高速度[Boost]
+	/// </summary>
+	float maxSpeedInBoost;
+
+	/// <summary>
+	/// 最高速チャレンジモード/段階数
+	/// </summary>
+	uint32_t numLevels;
+
+	/// <summary>
+	/// 最高速チャレンジモード/段階パラメータ
+	/// </summary>
+	PlayerMaxSpeedChallengeLevelParam levels[8];
 
 	/// <summary>
 	/// アニマル運搬モード/最低移動速度
@@ -7023,6 +7282,86 @@ typedef struct
 	/// アニマル運搬モード/重力サイズ
 	/// </summary>
 	float animalGravitySize;
+
+	/// <summary>
+	/// ニトロモード/ゲージ消費速度
+	/// </summary>
+	float nitroConsumptionRate;
+
+	/// <summary>
+	/// ニトロモード/最大空気抵抗
+	/// </summary>
+	float nitroAirDragPowerMin;
+
+	/// <summary>
+	/// ニトロモード/最小空気抵抗
+	/// </summary>
+	float nitroAirDragPowerMax;
+
+	/// <summary>
+	/// ニトロモード/時間一時停止
+	/// </summary>
+	cstring nitroHitStopName;
+
+	/// <summary>
+	/// ニトロモード/時間一時停止/エアブースト
+	/// </summary>
+	cstring nitroHitStopNameAir;
+
+	/// <summary>
+	/// ニトロモード/カメラ振動
+	/// </summary>
+	cstring nitroCameraShakeName;
+
+	/// <summary>
+	/// ニトロモード/カメラ振動/エアブースト
+	/// </summary>
+	cstring nitroCameraShakeNameAir;
+
+	/// <summary>
+	/// ニトロモード/コントローラ振動
+	/// </summary>
+	cstring nitroVibrationName;
+
+	/// <summary>
+	/// ニトロモード/コントローラ振動/エアブースト
+	/// </summary>
+	cstring nitroVibrationNameAir;
+
+	/// <summary>
+	/// ニトロモード/走り中の振動系の開始遅延時間
+	/// </summary>
+	float nitroRunEffectDelay;
+
+	/// <summary>
+	/// ニトロモード/カメラ振動/走行中
+	/// </summary>
+	cstring nitroCameraShakeNameInRun;
+
+	/// <summary>
+	/// ニトロモード/コントローラ振動/走行中
+	/// </summary>
+	cstring nitroVibrationNameInRun;
+
+	/// <summary>
+	/// ニトロモード/デフォルト速度
+	/// </summary>
+	PlayerCyberModeSpeedParam nitroSpeed;
+
+	/// <summary>
+	/// ニトロモード/ニトロ発動速度
+	/// </summary>
+	PlayerCyberModeSpeedParam nitroSpeedLvMax;
+
+	/// <summary>
+	/// ニトロモード/デフォルト速度/パワーブースト
+	/// </summary>
+	PlayerCyberModeSpeedParam nitroSpeedPowerBoost;
+
+	/// <summary>
+	/// ニトロモード/ニトロ発動速度/パワーブースト
+	/// </summary>
+	PlayerCyberModeSpeedParam nitroSpeedLvMaxPowerBoost;
 
 } PlayerParamCyberMode;
 
