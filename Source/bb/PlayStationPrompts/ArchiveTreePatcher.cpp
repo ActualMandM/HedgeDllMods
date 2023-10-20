@@ -2,7 +2,7 @@
 
 const std::vector<std::pair<const char*, const std::vector<const char*>>> NODES =
 {
-	{ "DualShock3Common", {"SonicActionCommon", "SonicActionCommonHud", "SystemCommon", "cmn200", "Guide", "pam_cmn", "StageGate", "Title", "NoticeBoard", "pam000"}}
+	{ "DualShock3Common", {"SonicActionCommon", "SonicActionCommonHud", "SystemCommon", "cmn200", "Guide", "pam_cmn", "Title", "NoticeBoard", "pam000"} }
 };
 
 HOOK(bool, __stdcall, ParseArchiveTree, 0xD4C8E0, void* A1, char* pData, const size_t size, void* pDatabase)
