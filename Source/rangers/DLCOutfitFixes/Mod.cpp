@@ -1,4 +1,5 @@
 #include "Mod.h"
+#include "Configuration.h"
 
 SIG_SCAN
 (
@@ -47,6 +48,36 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 
 		if (!strcmp(in_modelName, "chr_supersonic2"))
 			in_modelName = GetModelName(modelIdx, "supersonic2", nullptr);
+
+		// Can be toggled via configuration file
+		{
+			if (Configuration::cyber && !strcmp(in_modelName, "chr_soniccyber"))
+				in_modelName = GetModelName(modelIdx, "soniccyber", nullptr);
+
+			if (Configuration::effect)
+			{
+				if (!strcmp(in_modelName, "chr_supersonic_kick_L"))
+					in_modelName = GetModelName(modelIdx, "supersonic", "kick_L");
+
+				if (!strcmp(in_modelName, "chr_supersonic_kick_R"))
+					in_modelName = GetModelName(modelIdx, "supersonic", "kick_R");
+
+				if (!strcmp(in_modelName, "chr_supersonic_punch_L"))
+					in_modelName = GetModelName(modelIdx, "supersonic", "punch_L");
+
+				if (!strcmp(in_modelName, "chr_supersonic_punch_R"))
+					in_modelName = GetModelName(modelIdx, "supersonic", "punch_R");
+			}
+
+			if (Configuration::realtime)
+			{
+				if (!strcmp(in_modelName, "chr_supersoniccyber"))
+					in_modelName = GetModelName(modelIdx, "supersoniccyber", nullptr);
+
+				if (!strcmp(in_modelName, "chr_supersonicdamage"))
+					in_modelName = GetModelName(modelIdx, "supersonicdamage", nullptr);
+			}
+		}
 	}
 
 	return originalLoadResModel(in_modelName, a2);
@@ -56,6 +87,10 @@ extern "C" __declspec(dllexport) void Init()
 {
 	if (sigValid)
 	{
+		// Check if the configuration file exists
+		if (!Configuration::load("config.ini"))
+			printf("[Sonic Outfit Fixes] Config file failed to load!\n");
+
 		WRITE_NOP(m_SigSonicAuraVisibility(), 8);
 		INSTALL_HOOK(GetCurrentOutfit);
 
