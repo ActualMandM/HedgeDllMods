@@ -37,28 +37,29 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 		if (!strcmp(in_modelName, "chr_sonic"))
 			getModelName(modelName, modelIdx, "sonic", nullptr);
 
-		if (!strcmp(in_modelName, "chr_sonicT"))
+		else if (!strcmp(in_modelName, "chr_sonicT"))
 			getModelName(modelName, modelIdx, "sonic", nullptr);
 
-		if (!strcmp(in_modelName, "chr_sonic_aura"))
+		else if (!strcmp(in_modelName, "chr_sonic_aura"))
 			getModelName(modelName, modelIdx, "sonic", "aura");
 
-		if (!strcmp(in_modelName, "chr_sonic_shape"))
+		else if (!strcmp(in_modelName, "chr_sonic_shape"))
 			getModelName(modelName, modelIdx, "sonic", "shape");
 
-		if (!strcmp(in_modelName, "chr_supersonic"))
+		else if (!strcmp(in_modelName, "chr_supersonic"))
 			getModelName(modelName, modelIdx, "supersonic", nullptr);
 
-		if (!strcmp(in_modelName, "chr_supersonic_aura"))
+		else if (!strcmp(in_modelName, "chr_supersonic_aura"))
 			getModelName(modelName, modelIdx, "supersonic", "aura");
 
-		if (!strcmp(in_modelName, "chr_supersonic_shape"))
+		else if (!strcmp(in_modelName, "chr_supersonic_shape"))
 			getModelName(modelName, modelIdx, "supersonic", "shape");
 
-		if (!strcmp(in_modelName, "chr_supersonic2"))
+		else if (!strcmp(in_modelName, "chr_supersonic2"))
 			getModelName(modelName, modelIdx, "supersonic2", nullptr);
 
 		// Can be toggled via configuration file
+		else
 		{
 			if (Configuration::cyber && !strcmp(in_modelName, "chr_soniccyber"))
 				getModelName(modelName, modelIdx, "soniccyber", nullptr);
@@ -68,13 +69,13 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 				if (!strcmp(in_modelName, "chr_supersonic_kick_L"))
 					getModelName(modelName, modelIdx, "supersonic", "kick_L");
 
-				if (!strcmp(in_modelName, "chr_supersonic_kick_R"))
+				else if (!strcmp(in_modelName, "chr_supersonic_kick_R"))
 					getModelName(modelName, modelIdx, "supersonic", "kick_R");
 
-				if (!strcmp(in_modelName, "chr_supersonic_punch_L"))
+				else if (!strcmp(in_modelName, "chr_supersonic_punch_L"))
 					getModelName(modelName, modelIdx, "supersonic", "punch_L");
 
-				if (!strcmp(in_modelName, "chr_supersonic_punch_R"))
+				else if (!strcmp(in_modelName, "chr_supersonic_punch_R"))
 					getModelName(modelName, modelIdx, "supersonic", "punch_R");
 			}
 
@@ -83,7 +84,7 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 				if (!strcmp(in_modelName, "chr_supersoniccyber"))
 					getModelName(modelName, modelIdx, "supersoniccyber", nullptr);
 
-				if (!strcmp(in_modelName, "chr_supersonicdamage"))
+				else if (!strcmp(in_modelName, "chr_supersonicdamage"))
 					getModelName(modelName, modelIdx, "supersonicdamage", nullptr);
 			}
 		}
