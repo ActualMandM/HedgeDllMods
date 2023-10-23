@@ -31,6 +31,9 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 	{
 		uint8_t modelIdx = outfit - 1;
 
+		if (!strcmp(in_modelName, "chr_sonicT"))
+			in_modelName = GetModelName(modelIdx, "sonic", nullptr);
+
 		if (!strcmp(in_modelName, "chr_sonic_aura"))
 			in_modelName = GetModelName(modelIdx, "sonic", "aura");
 
