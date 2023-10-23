@@ -15,16 +15,17 @@ const char* dlcNames[MAX_OUTFIT][2] = {
 	{ "chr", "crown" }			// Frontier Elite
 };
 
-const char* GetModelName(uint8_t outfit, const char* model, const char* type)
+void getModelName(char* result, uint8_t outfit, const char* model, const char* type)
 {
-	std::stringstream modelName;
-
-	modelName << dlcNames[outfit][0] << "_" << model << "_" << dlcNames[outfit][1];
+	strcpy(result, dlcNames[outfit][0]);
+	strcat(result, "_");
+	strcat(result, model);
+	strcat(result, "_");
+	strcat(result, dlcNames[outfit][1]);
 
 	if (type != nullptr)
 	{
-		modelName << "_" << type;
+		strcat(result, "_");
+		strcat(result, type);
 	}
-
-	return modelName.str().c_str();
 }

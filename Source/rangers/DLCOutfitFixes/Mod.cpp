@@ -27,63 +27,69 @@ auto m_LoadResModel = READ_CALL(m_SigSonicAuraVisibility() - 0x1A);
 
 HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName, int64_t a2)
 {
-	if ((outfit > 0 && outfit <= MAX_OUTFIT) && StringHelper::ContainsSubstring(in_modelName, "chr_"))
+	char modelName[256];
+	strcpy(modelName, in_modelName);
+
+	if ((outfit > 0 && outfit <= MAX_OUTFIT) && (StringHelper::ContainsSubstring(modelName, "chr_") && StringHelper::ContainsSubstring(modelName, "sonic")))
 	{
 		uint8_t modelIdx = outfit - 1;
 
+		if (!strcmp(in_modelName, "chr_sonic"))
+			getModelName(modelName, modelIdx, "sonic", nullptr);
+
 		if (!strcmp(in_modelName, "chr_sonicT"))
-			in_modelName = GetModelName(modelIdx, "sonic", nullptr);
+			getModelName(modelName, modelIdx, "sonic", nullptr);
 
 		if (!strcmp(in_modelName, "chr_sonic_aura"))
-			in_modelName = GetModelName(modelIdx, "sonic", "aura");
+			getModelName(modelName, modelIdx, "sonic", "aura");
 
 		if (!strcmp(in_modelName, "chr_sonic_shape"))
-			in_modelName = GetModelName(modelIdx, "sonic", "shape");
+			getModelName(modelName, modelIdx, "sonic", "shape");
 
 		if (!strcmp(in_modelName, "chr_supersonic"))
-			in_modelName = GetModelName(modelIdx, "supersonic", nullptr);
+			getModelName(modelName, modelIdx, "supersonic", nullptr);
 
 		if (!strcmp(in_modelName, "chr_supersonic_aura"))
-			in_modelName = GetModelName(modelIdx, "supersonic", "aura");
+			getModelName(modelName, modelIdx, "supersonic", "aura");
 
 		if (!strcmp(in_modelName, "chr_supersonic_shape"))
-			in_modelName = GetModelName(modelIdx, "supersonic", "shape");
+			getModelName(modelName, modelIdx, "supersonic", "shape");
 
 		if (!strcmp(in_modelName, "chr_supersonic2"))
-			in_modelName = GetModelName(modelIdx, "supersonic2", nullptr);
+			getModelName(modelName, modelIdx, "supersonic2", nullptr);
 
 		// Can be toggled via configuration file
 		{
 			if (Configuration::cyber && !strcmp(in_modelName, "chr_soniccyber"))
-				in_modelName = GetModelName(modelIdx, "soniccyber", nullptr);
+				getModelName(modelName, modelIdx, "soniccyber", nullptr);
 
 			if (Configuration::effect)
 			{
 				if (!strcmp(in_modelName, "chr_supersonic_kick_L"))
-					in_modelName = GetModelName(modelIdx, "supersonic", "kick_L");
+					getModelName(modelName, modelIdx, "supersonic", "kick_L");
 
 				if (!strcmp(in_modelName, "chr_supersonic_kick_R"))
-					in_modelName = GetModelName(modelIdx, "supersonic", "kick_R");
+					getModelName(modelName, modelIdx, "supersonic", "kick_R");
 
 				if (!strcmp(in_modelName, "chr_supersonic_punch_L"))
-					in_modelName = GetModelName(modelIdx, "supersonic", "punch_L");
+					getModelName(modelName, modelIdx, "supersonic", "punch_L");
 
 				if (!strcmp(in_modelName, "chr_supersonic_punch_R"))
-					in_modelName = GetModelName(modelIdx, "supersonic", "punch_R");
+					getModelName(modelName, modelIdx, "supersonic", "punch_R");
 			}
 
 			if (Configuration::realtime)
 			{
 				if (!strcmp(in_modelName, "chr_supersoniccyber"))
-					in_modelName = GetModelName(modelIdx, "supersoniccyber", nullptr);
+					getModelName(modelName, modelIdx, "supersoniccyber", nullptr);
 
 				if (!strcmp(in_modelName, "chr_supersonicdamage"))
-					in_modelName = GetModelName(modelIdx, "supersonicdamage", nullptr);
+					getModelName(modelName, modelIdx, "supersonicdamage", nullptr);
 			}
 		}
 	}
 
-	return originalLoadResModel(in_modelName, a2);
+	return originalLoadResModel(modelName, a2);
 }
 
 extern "C" __declspec(dllexport) void Init()
