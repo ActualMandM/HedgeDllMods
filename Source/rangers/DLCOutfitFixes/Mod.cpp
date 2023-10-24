@@ -87,6 +87,10 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 				else if (!strcmp(in_modelName, "chr_supersonicdamage"))
 					getModelName(modelName, modelIdx, "supersonicdamage", nullptr);
 			}
+
+			// NOTE: There's chr_supersonicspin too, but it only shows up with Homing Shot and Homing Attack
+			if (Configuration::jumpball && !strcmp(in_modelName, "chr_sonicspin"))
+				getModelName(modelName, modelIdx, "sonicspin", nullptr);
 		}
 	}
 
