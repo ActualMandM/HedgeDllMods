@@ -1,9 +1,11 @@
 #include "Configuration.h"
 
-bool Configuration::cyber = false;
-bool Configuration::effect = false;
-bool Configuration::realtime = false;
-bool Configuration::jumpball = false;
+bool Configuration::incompatible = false;
+
+bool Configuration::sonicCyber = false;
+bool Configuration::sonicEffect = false;
+bool Configuration::sonicRealtime = false;
+bool Configuration::sonicJumpball = false;
 
 bool Configuration::Load(const std::string& filePath)
 {
@@ -12,10 +14,12 @@ bool Configuration::Load(const std::string& filePath)
 	if (reader.ParseError() != 0)
 		return false;
 
-	cyber = reader.GetBoolean("Main", "Cyber", false);
-	effect = reader.GetBoolean("Main", "Effect", false);
-	realtime = reader.GetBoolean("Main", "Realtime", false);
-	jumpball = reader.GetBoolean("Main", "Jumpball", false);
+	incompatible = reader.GetBoolean("Main", "Incompatible", false);
+
+	sonicCyber = reader.GetBoolean("Sonic", "Cyber", false);
+	sonicEffect = reader.GetBoolean("Sonic", "Effect", false);
+	sonicRealtime = reader.GetBoolean("Sonic", "Realtime", false);
+	sonicJumpball = reader.GetBoolean("Sonic", "Jumpball", false);
 
 	return true;
 }

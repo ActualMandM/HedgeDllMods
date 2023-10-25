@@ -5,10 +5,12 @@
 class Configuration
 {
 	public:
-		static bool cyber;
-		static bool effect;
-		static bool realtime;
-		static bool jumpball;
+		static bool incompatible;
+
+		static bool sonicCyber;
+		static bool sonicEffect;
+		static bool sonicRealtime;
+		static bool sonicJumpball;
 
 		static bool Load(const std::string& filePath);
 };

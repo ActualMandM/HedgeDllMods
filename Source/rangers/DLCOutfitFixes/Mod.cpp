@@ -30,7 +30,8 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 	char modelName[256];
 	strcpy(modelName, in_modelName);
 
-	if ((outfit > 0 && outfit <= MAX_OUTFIT) && (StringHelper::ContainsSubstring(modelName, "chr_") && StringHelper::ContainsSubstring(modelName, "sonic")))
+	if (!Configuration::incompatible && (outfit > 0 && outfit <= MAX_OUTFIT) &&
+		(StringHelper::ContainsSubstring(modelName, "chr_") && StringHelper::ContainsSubstring(modelName, "sonic")))
 	{
 		uint8_t modelIdx = outfit - 1;
 
@@ -58,13 +59,13 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 		else if (!strcmp(in_modelName, "chr_supersonic2"))
 			GetModelName(modelName, modelIdx, "supersonic2", nullptr);
 
-		// Can be toggled via configuration file
+		// Character mods can toggle these on via config
 		else
 		{
-			if (Configuration::cyber && !strcmp(in_modelName, "chr_soniccyber"))
+			if (Configuration::sonicCyber && !strcmp(in_modelName, "chr_soniccyber"))
 				GetModelName(modelName, modelIdx, "soniccyber", nullptr);
 
-			if (Configuration::effect)
+			if (Configuration::sonicEffect)
 			{
 				if (!strcmp(in_modelName, "chr_supersonic_kick_L"))
 					GetModelName(modelName, modelIdx, "supersonic", "kick_L");
@@ -79,7 +80,7 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 					GetModelName(modelName, modelIdx, "supersonic", "punch_R");
 			}
 
-			if (Configuration::realtime)
+			if (Configuration::sonicRealtime)
 			{
 				if (!strcmp(in_modelName, "chr_supersoniccyber"))
 					GetModelName(modelName, modelIdx, "supersoniccyber", nullptr);
@@ -89,7 +90,7 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 			}
 
 			// NOTE: There's chr_supersonicspin too, but it only shows up with Homing Shot and Homing Attack
-			if (Configuration::jumpball && !strcmp(in_modelName, "chr_sonicspin"))
+			if (Configuration::sonicJumpball && !strcmp(in_modelName, "chr_sonicspin"))
 				GetModelName(modelName, modelIdx, "sonicspin", nullptr);
 		}
 	}
@@ -101,10 +102,6 @@ extern "C" __declspec(dllexport) void Init()
 {
 	if (sigValid)
 	{
-		// Check if the configuration file exists
-		if (!Configuration::Load("config.ini"))
-			printf("[Sonic Outfit Fixes] Config file failed to load!\n");
-
 		// Disable aura visibility being removed for certain outfits
 		WRITE_NOP(m_SigSonicAuraVisibility(), 8);
 		INSTALL_HOOK(GetCurrentOutfit);
@@ -122,14 +119,22 @@ extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
 {
 	if (sigValid)
 	{
-		// Check for configuration in loaded mods
+		// Check for config in loaded mods
 		for (Mod* mod : *mods->ModList)
 		{
+			// Prevent loading config from this mod
+			if (!strcmp(mod->Name, "Sonic Outfit Fixes"))
+				continue;
+
 			std::string configPath = StringHelper::GetSubstringBeforeLastChar(mod->Path, '\\').append("\\OutfitFixes.ini");
 
 			if (Configuration::Load(configPath))
 			{
-				printf("[Sonic Outfit Fixes] Configuration was overridden by %s\n", mod->Name);
+				printf("[Sonic Outfit Fixes] Loading configuration from %s\n", mod->Name);
+
+				if (Configuration::incompatible)
+					printf("[Sonic Outfit Fixes] %s is marked as incompatible, disabling...\n", mod->Name);
+
 				break;
 			}
 		}
