@@ -13,6 +13,10 @@
 #include <vector>
 #include <sstream>
 
+// HE2ModLoader
+#include <HE2ModLoader.h>
+
 // Other
 #include <Helpers.h>
 #include <Signature.h>
+#include <StringHelper.h>

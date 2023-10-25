@@ -35,62 +35,62 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 		uint8_t modelIdx = outfit - 1;
 
 		if (!strcmp(in_modelName, "chr_sonic"))
-			getModelName(modelName, modelIdx, "sonic", nullptr);
+			GetModelName(modelName, modelIdx, "sonic", nullptr);
 
 		else if (!strcmp(in_modelName, "chr_sonicT"))
-			getModelName(modelName, modelIdx, "sonic", nullptr);
+			GetModelName(modelName, modelIdx, "sonic", nullptr);
 
 		else if (!strcmp(in_modelName, "chr_sonic_aura"))
-			getModelName(modelName, modelIdx, "sonic", "aura");
+			GetModelName(modelName, modelIdx, "sonic", "aura");
 
 		else if (!strcmp(in_modelName, "chr_sonic_shape"))
-			getModelName(modelName, modelIdx, "sonic", "shape");
+			GetModelName(modelName, modelIdx, "sonic", "shape");
 
 		else if (!strcmp(in_modelName, "chr_supersonic"))
-			getModelName(modelName, modelIdx, "supersonic", nullptr);
+			GetModelName(modelName, modelIdx, "supersonic", nullptr);
 
 		else if (!strcmp(in_modelName, "chr_supersonic_aura"))
-			getModelName(modelName, modelIdx, "supersonic", "aura");
+			GetModelName(modelName, modelIdx, "supersonic", "aura");
 
 		else if (!strcmp(in_modelName, "chr_supersonic_shape"))
-			getModelName(modelName, modelIdx, "supersonic", "shape");
+			GetModelName(modelName, modelIdx, "supersonic", "shape");
 
 		else if (!strcmp(in_modelName, "chr_supersonic2"))
-			getModelName(modelName, modelIdx, "supersonic2", nullptr);
+			GetModelName(modelName, modelIdx, "supersonic2", nullptr);
 
 		// Can be toggled via configuration file
 		else
 		{
 			if (Configuration::cyber && !strcmp(in_modelName, "chr_soniccyber"))
-				getModelName(modelName, modelIdx, "soniccyber", nullptr);
+				GetModelName(modelName, modelIdx, "soniccyber", nullptr);
 
 			if (Configuration::effect)
 			{
 				if (!strcmp(in_modelName, "chr_supersonic_kick_L"))
-					getModelName(modelName, modelIdx, "supersonic", "kick_L");
+					GetModelName(modelName, modelIdx, "supersonic", "kick_L");
 
 				else if (!strcmp(in_modelName, "chr_supersonic_kick_R"))
-					getModelName(modelName, modelIdx, "supersonic", "kick_R");
+					GetModelName(modelName, modelIdx, "supersonic", "kick_R");
 
 				else if (!strcmp(in_modelName, "chr_supersonic_punch_L"))
-					getModelName(modelName, modelIdx, "supersonic", "punch_L");
+					GetModelName(modelName, modelIdx, "supersonic", "punch_L");
 
 				else if (!strcmp(in_modelName, "chr_supersonic_punch_R"))
-					getModelName(modelName, modelIdx, "supersonic", "punch_R");
+					GetModelName(modelName, modelIdx, "supersonic", "punch_R");
 			}
 
 			if (Configuration::realtime)
 			{
 				if (!strcmp(in_modelName, "chr_supersoniccyber"))
-					getModelName(modelName, modelIdx, "supersoniccyber", nullptr);
+					GetModelName(modelName, modelIdx, "supersoniccyber", nullptr);
 
 				else if (!strcmp(in_modelName, "chr_supersonicdamage"))
-					getModelName(modelName, modelIdx, "supersonicdamage", nullptr);
+					GetModelName(modelName, modelIdx, "supersonicdamage", nullptr);
 			}
 
 			// NOTE: There's chr_supersonicspin too, but it only shows up with Homing Shot and Homing Attack
 			if (Configuration::jumpball && !strcmp(in_modelName, "chr_sonicspin"))
-				getModelName(modelName, modelIdx, "sonicspin", nullptr);
+				GetModelName(modelName, modelIdx, "sonicspin", nullptr);
 		}
 	}
 
@@ -102,9 +102,10 @@ extern "C" __declspec(dllexport) void Init()
 	if (sigValid)
 	{
 		// Check if the configuration file exists
-		if (!Configuration::load("config.ini"))
+		if (!Configuration::Load("config.ini"))
 			printf("[Sonic Outfit Fixes] Config file failed to load!\n");
 
+		// Disable aura visibility being removed for certain outfits
 		WRITE_NOP(m_SigSonicAuraVisibility(), 8);
 		INSTALL_HOOK(GetCurrentOutfit);
 
@@ -114,5 +115,23 @@ extern "C" __declspec(dllexport) void Init()
 	else
 	{
 		rangersVersionWarning(TEXT("Sonic Outfit Fixes"));
+	}
+}
+
+extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
+{
+	if (sigValid)
+	{
+		// Check for configuration in loaded mods
+		for (Mod* mod : *mods->ModList)
+		{
+			std::string configPath = StringHelper::GetSubstringBeforeLastChar(mod->Path, '\\').append("\\OutfitFixes.ini");
+
+			if (Configuration::Load(configPath))
+			{
+				printf("[Sonic Outfit Fixes] Configuration was overridden by %s\n", mod->Name);
+				break;
+			}
+		}
 	}
 }

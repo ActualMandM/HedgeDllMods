@@ -15,7 +15,7 @@ const char* dlcNames[MAX_OUTFIT][2] = {
 	{ "chr", "crown" }			// Frontier Elite
 };
 
-void getModelName(char* result, uint8_t outfit, const char* model, const char* type)
+void GetModelName(char* result, uint8_t outfit, const char* model, const char* type)
 {
 	strcpy(result, dlcNames[outfit][0]);
 	strcat(result, "_");

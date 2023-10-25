@@ -10,5 +10,5 @@ class Configuration
 		static bool realtime;
 		static bool jumpball;
 
-		static bool load(const std::string& filePath);
+		static bool Load(const std::string& filePath);
 };

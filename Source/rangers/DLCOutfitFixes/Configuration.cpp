@@ -5,7 +5,7 @@ bool Configuration::effect = false;
 bool Configuration::realtime = false;
 bool Configuration::jumpball = false;
 
-bool Configuration::load(const std::string& filePath)
+bool Configuration::Load(const std::string& filePath)
 {
 	const INIReader reader(filePath);
 
