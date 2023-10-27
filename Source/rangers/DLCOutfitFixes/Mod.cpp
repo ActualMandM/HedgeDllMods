@@ -122,8 +122,10 @@ extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
 		// Check for config in loaded mods
 		for (Mod* mod : *mods->ModList)
 		{
+			ModIniData::Data modInfo = ModIniData::Data::ReadConfig(mod->Path);
+
 			// Prevent loading config from this mod
-			if (!strcmp(mod->Name, "Sonic Outfit Fixes"))
+			if (StringHelper::Compare(modInfo.id, "mandm.sonicfrontiers.dlcoutfitfixes"))
 				continue;
 
 			std::string configPath = StringHelper::GetSubstringBeforeLastChar(mod->Path, '\\').append("\\OutfitFixes.ini");

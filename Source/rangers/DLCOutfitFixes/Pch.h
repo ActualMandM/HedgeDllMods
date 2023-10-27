@@ -18,5 +18,6 @@
 
 // Other
 #include <Helpers.h>
+#include <ModIniData.h>
 #include <Signature.h>
 #include <StringHelper.h>
