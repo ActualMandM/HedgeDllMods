@@ -15,7 +15,7 @@ const char* dlcNames[MAX_OUTFIT][2] = {
 	{ "chr", "crown" }			// Frontier Elite
 };
 
-void GetModelName(char* result, uint8_t outfit, const char* model, const char* type)
+void GetSonicName(char* result, uint8_t outfit, const char* model, const char* type)
 {
 	strcpy(result, dlcNames[outfit][0]);
 	strcat(result, "_");
@@ -28,4 +28,15 @@ void GetModelName(char* result, uint8_t outfit, const char* model, const char* t
 		strcat(result, "_");
 		strcat(result, type);
 	}
+}
+
+void GetFriendName(char* result, const char* model, const char* type)
+{
+	strcpy(result, "chr_");
+	strcat(result, model);
+
+	if (type != nullptr)
+		strcat(result, type);
+
+	strcat(result, "_birthday");
 }
