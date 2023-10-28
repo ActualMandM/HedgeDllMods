@@ -15,4 +15,4 @@ A repository hosting DLL source code for Hedgehog Engine mods.
 - Sonic Frontiers
   - [10 Years](Source/rangers/10Years)
   - [Sonic Outfit Fixes](Source/rangers/DLCOutfitFixes) (formerly *DLC Outfit Fixes*)
-  - [Infinite](Source/rangers/Infinite)
+  - [Infinite](Source/rangers/Infinite) (deprecated)
