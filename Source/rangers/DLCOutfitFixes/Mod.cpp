@@ -1,6 +1,7 @@
 #include "Mod.h"
 #include "Configuration.h"
 
+/* v1.40: 0x140132A20 */
 SIG_SCAN
 (
 	m_SigGetCurrentSonicOutfit,
@@ -8,14 +9,34 @@ SIG_SCAN
 	"xxxxxxxxxxxxx????xxxxx????xxxxxxxxxxxxxxxxxxxx"
 );
 
-uint8_t outfit = 0;
+/* v1.40: 0x14A69E1F5 */
+SIG_SCAN
+(
+	m_SigGetCurrentFriendOutfit,
+	"\xE8\x00\x00\x00\x00\x84\xC0\x48\x8D\x0D\x00\x00\x00\x00\x48\x8D\x3D\x00\x00\x00\x00\xB2\x01\x48\x0F\x44\xCF\x0F\xB6\xF0\xE8\x00\x00\x00\x00\xB2\x01\x48\x89\x43\x38\x48\x89\xF9",
+	"x????xxxxx????xxx????xxxxxxxxxx????xxxxxxxxx"
+);
+
+uint8_t sonicOutfit = 0;
+bool friendOutfit = false;
 
 HOOK(uint8_t, __fastcall, GetCurrentSonicOutfit, m_SigGetCurrentSonicOutfit(), uint8_t in_saveOutfitIdx)
 {
-	outfit = in_saveOutfitIdx;
+	sonicOutfit = in_saveOutfitIdx;
 	return originalGetCurrentSonicOutfit(in_saveOutfitIdx);
 }
 
+/* v1.40: 0x1401341B0 */
+auto m_GetCurrentFriendsOutfit = READ_CALL(m_SigGetCurrentFriendOutfit());
+
+HOOK(bool, __fastcall, GetCurrentFriendsOutfit, m_GetCurrentFriendsOutfit, int64_t a1)
+{
+	bool result = originalGetCurrentFriendsOutfit(a1);
+	friendOutfit = result;
+	return result;
+}
+
+/* v1.40: 0x140912890 */
 SIG_SCAN
 (
 	m_SigSonicAuraVisibility,
@@ -23,6 +44,7 @@ SIG_SCAN
 	"xxxxxxxxxxxxx????x????xx?x"
 );
 
+/* v1.40: 0x1401584A0 */
 auto m_LoadResModel = READ_CALL(m_SigSonicAuraVisibility() - 0x1A);
 
 HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName, int64_t a2)
@@ -33,9 +55,10 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 	if (!Configuration::incompatible && StringHelper::ContainsSubstring(modelName, "chr_"))
 	{
 		// Sonic
-		if ((outfit > 0 && outfit <= MAX_OUTFIT) && StringHelper::ContainsSubstring(modelName, "sonic"))
+		if (!Configuration::sonicIncompatible && (sonicOutfit > 0 && sonicOutfit <= MAX_OUTFIT) &&
+			StringHelper::ContainsSubstring(modelName, "sonic"))
 		{
-			uint8_t modelIdx = outfit - 1;
+			uint8_t modelIdx = sonicOutfit - 1;
 
 			if (StringHelper::Compare(in_modelName, "chr_sonic"))
 				GetSonicName(modelName, modelIdx, "sonic", nullptr);
@@ -98,16 +121,17 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 		}
 
 		// Friends
-		if (false)
+		if (!Configuration::friendsIncompatible && friendOutfit &&
+			(StringHelper::ContainsSubstring(modelName, "amy") || StringHelper::ContainsSubstring(modelName, "knuckles") || StringHelper::ContainsSubstring(modelName, "tails")))
 		{
 			if (StringHelper::Compare(in_modelName, "chr_amyP"))
-				GetFriendName(modelName, "amyP", nullptr);
+				GetFriendName(modelName, "amy", "P");
 
 			else if (StringHelper::Compare(in_modelName, "chr_knucklesP"))
-				GetFriendName(modelName, "knucklesP", nullptr);
+				GetFriendName(modelName, "knuckles", "P");
 
 			else if (StringHelper::Compare(in_modelName, "chr_tailsP"))
-				GetFriendName(modelName, "tailsP", nullptr);
+				GetFriendName(modelName, "tails", "P");
 		}
 	}
 
@@ -120,8 +144,13 @@ extern "C" __declspec(dllexport) void Init()
 	{
 		// Disable certain outfits removing Sonic's aura
 		WRITE_NOP(m_SigSonicAuraVisibility(), 8);
-		INSTALL_HOOK(GetCurrentSonicOutfit);
 
+		// Install hooks for getting outfits
+		INSTALL_HOOK(GetCurrentSonicOutfit);
+		printf("[Outfit Fixes] m_GetCurrentFriendsOutfit: 0x%llx\n", m_GetCurrentFriendsOutfit);
+		INSTALL_HOOK(GetCurrentFriendsOutfit);
+
+		// Install hook for loading ResModel
 		printf("[Outfit Fixes] m_LoadResModel: 0x%llx\n", m_LoadResModel);
 		INSTALL_HOOK(LoadResModel);
 	}
