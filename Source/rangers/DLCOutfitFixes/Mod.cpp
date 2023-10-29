@@ -132,6 +132,37 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 
 			else if (StringHelper::Compare(in_modelName, "chr_tailsP"))
 				GetFriendName(modelName, "tails", "P");
+
+			// Character mods can toggle these on via config
+			else
+			{
+				if (Configuration::friendsAmyMoves)
+				{
+					if (StringHelper::Compare(in_modelName, "chr_amyhammer"))
+						GetFriendName(modelName, "amy", "hammer");
+
+					else if (StringHelper::Compare(in_modelName, "chr_amytarot"))
+						GetFriendName(modelName, "amy", "tarot");
+				}
+
+				if (Configuration::friendsTailsMoves)
+				{
+					if (StringHelper::Compare(in_modelName, "chr_cyblaster"))
+						GetFriendName(modelName, "cyblaster", nullptr);
+
+					else if (StringHelper::Compare(in_modelName, "chr_cyclone"))
+						GetFriendName(modelName, "cyclone", nullptr);
+
+					else if (StringHelper::Compare(in_modelName, "chr_tailsspanner"))
+						GetFriendName(modelName, "tails", "spanner");
+
+					else if (StringHelper::Compare(in_modelName, "chr_tailsspring"))
+						GetFriendName(modelName, "tails", "spring");
+				}
+
+				if (Configuration::friendsKnucklesMoves && StringHelper::Compare(in_modelName, "chr_knucklesdrill"))
+					GetFriendName(modelName, "knuckles", "drill");
+			}
 		}
 	}
 
