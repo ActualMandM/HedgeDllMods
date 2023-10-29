@@ -5,18 +5,24 @@
 class Configuration
 {
 	public:
-		static bool incompatible;
-
 		static bool sonicIncompatible;
 		static bool sonicCyber;
 		static bool sonicEffect;
 		static bool sonicRealtime;
 		static bool sonicJumpball;
 
-		static bool friendsIncompatible;
-		static bool friendsAmyMoves;
-		static bool friendsTailsMoves;
-		static bool friendsKnucklesMoves;
+		static bool amyIncompatible;
+		static bool amyHammer;
+		static bool amyTarot;
+
+		static bool knucklesIncompatible;
+		static bool knucklesDrill;
+
+		static bool tailsIncompatible;
+		static bool tailsCyblaster;
+		static bool tailsCyclone;
+		static bool tailsSpanner;
+		static bool tailsSpring;
 
 		static bool Load(const std::string& filePath);
 };
