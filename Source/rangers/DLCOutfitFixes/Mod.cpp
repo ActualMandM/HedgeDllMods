@@ -52,7 +52,7 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 	char modelName[256];
 	strcpy(modelName, in_modelName);
 
-	if (!Configuration::incompatible && StringHelper::ContainsSubstring(modelName, "chr_"))
+	if (StringHelper::ContainsSubstring(modelName, "chr_"))
 	{
 		// Sonic
 		if (!Configuration::sonicIncompatible && (sonicOutfit > 0 && sonicOutfit <= MAX_OUTFIT) &&
@@ -121,47 +121,50 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 		}
 
 		// Friends
-		if (!Configuration::friendsIncompatible && friendOutfit &&
+		if (friendOutfit &&
 			(StringHelper::ContainsSubstring(modelName, "amy") || StringHelper::ContainsSubstring(modelName, "knuckles") || StringHelper::ContainsSubstring(modelName, "tails")))
 		{
-			if (StringHelper::Compare(in_modelName, "chr_amyP"))
+			if (!Configuration::amyIncompatible && StringHelper::Compare(in_modelName, "chr_amyP"))
 				GetFriendName(modelName, "amy", "P");
 
-			else if (StringHelper::Compare(in_modelName, "chr_knucklesP"))
+			else if (!Configuration::knucklesIncompatible && StringHelper::Compare(in_modelName, "chr_knucklesP"))
 				GetFriendName(modelName, "knuckles", "P");
 
-			else if (StringHelper::Compare(in_modelName, "chr_tailsP"))
+			else if (!Configuration::tailsIncompatible && StringHelper::Compare(in_modelName, "chr_tailsP"))
 				GetFriendName(modelName, "tails", "P");
 
 			// Character mods can toggle these on via config
 			else
 			{
-				if (Configuration::friendsAmyMoves)
+				if (!Configuration::amyIncompatible)
 				{
-					if (StringHelper::Compare(in_modelName, "chr_amyhammer"))
+					if (Configuration::amyHammer && StringHelper::Compare(in_modelName, "chr_amyhammer"))
 						GetFriendName(modelName, "amy", "hammer");
 
-					else if (StringHelper::Compare(in_modelName, "chr_amytarot"))
+					else if (Configuration::amyTarot && StringHelper::Compare(in_modelName, "chr_amytarot"))
 						GetFriendName(modelName, "amy", "tarot");
 				}
 
-				if (Configuration::friendsTailsMoves)
+				if (!Configuration::knucklesIncompatible)
 				{
-					if (StringHelper::Compare(in_modelName, "chr_cyblaster"))
-						GetFriendName(modelName, "cyblaster", nullptr);
-
-					else if (StringHelper::Compare(in_modelName, "chr_cyclone"))
-						GetFriendName(modelName, "cyclone", nullptr);
-
-					else if (StringHelper::Compare(in_modelName, "chr_tailsspanner"))
-						GetFriendName(modelName, "tails", "spanner");
-
-					else if (StringHelper::Compare(in_modelName, "chr_tailsspring"))
-						GetFriendName(modelName, "tails", "spring");
+					if (Configuration::knucklesDrill && StringHelper::Compare(in_modelName, "chr_knucklesdrill"))
+						GetFriendName(modelName, "knuckles", "drill");
 				}
 
-				if (Configuration::friendsKnucklesMoves && StringHelper::Compare(in_modelName, "chr_knucklesdrill"))
-					GetFriendName(modelName, "knuckles", "drill");
+				if (!Configuration::tailsIncompatible)
+				{
+					if (Configuration::tailsCyblaster && StringHelper::Compare(in_modelName, "chr_cyblaster"))
+						GetFriendName(modelName, "cyblaster", nullptr);
+
+					else if (Configuration::tailsCyclone && StringHelper::Compare(in_modelName, "chr_cyclone"))
+						GetFriendName(modelName, "cyclone", nullptr);
+
+					else if (Configuration::tailsSpanner && StringHelper::Compare(in_modelName, "chr_tailsspanner"))
+						GetFriendName(modelName, "tails", "spanner");
+
+					else if (Configuration::tailsSpring && StringHelper::Compare(in_modelName, "chr_tailsspring"))
+						GetFriendName(modelName, "tails", "spring");
+				}
 			}
 		}
 	}
@@ -207,15 +210,7 @@ extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
 			std::string configPath = StringHelper::GetSubstringBeforeLastChar(mod->Path, '\\').append("\\OutfitFixes.ini");
 
 			if (Configuration::Load(configPath))
-			{
 				printf("[Outfit Fixes] Loading configuration from %s\n", mod->Name);
-
-				if (Configuration::incompatible)
-				{
-					printf("[Outfit Fixes] %s is marked as incompatible, disabling.\n", mod->Name);
-					break;
-				}
-			}
 		}
 	}
 }
