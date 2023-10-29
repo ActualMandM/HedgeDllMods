@@ -14,6 +14,9 @@ class Configuration
 		static bool sonicJumpball;
 
 		static bool friendsIncompatible;
+		static bool friendsAmyMoves;
+		static bool friendsTailsMoves;
+		static bool friendsKnucklesMoves;
 
 		static bool Load(const std::string& filePath);
 };

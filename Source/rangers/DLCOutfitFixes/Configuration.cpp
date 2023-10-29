@@ -9,6 +9,9 @@ bool Configuration::sonicRealtime = false;
 bool Configuration::sonicJumpball = false;
 
 bool Configuration::friendsIncompatible = false;
+bool Configuration::friendsAmyMoves = false;
+bool Configuration::friendsTailsMoves = false;
+bool Configuration::friendsKnucklesMoves = false;
 
 bool Configuration::Load(const std::string& filePath)
 {
@@ -26,6 +29,9 @@ bool Configuration::Load(const std::string& filePath)
 	sonicJumpball = reader.GetBoolean("Sonic", "Jumpball", sonicJumpball);
 
 	friendsIncompatible = reader.GetBoolean("Friends", "Incompatible", friendsIncompatible);
+	friendsAmyMoves = reader.GetBoolean("Friends", "AmyMoves", friendsAmyMoves);
+	friendsTailsMoves = reader.GetBoolean("Friends", "TailsMoves", friendsTailsMoves);
+	friendsKnucklesMoves = reader.GetBoolean("Friends", "KnucklesMoves", friendsKnucklesMoves);
 
 	return true;
 }
