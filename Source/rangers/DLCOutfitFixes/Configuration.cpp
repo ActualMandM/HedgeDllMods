@@ -17,15 +17,15 @@ bool Configuration::Load(const std::string& filePath)
 	if (reader.ParseError() != 0)
 		return false;
 
-	incompatible = reader.GetBoolean("Main", "Incompatible", false);
+	incompatible = reader.GetBoolean("Main", "Incompatible", incompatible);
 
-	sonicIncompatible = reader.GetBoolean("Sonic", "Incompatible", false);
-	sonicCyber = reader.GetBoolean("Sonic", "Cyber", false);
-	sonicEffect = reader.GetBoolean("Sonic", "Effect", false);
-	sonicRealtime = reader.GetBoolean("Sonic", "Realtime", false);
-	sonicJumpball = reader.GetBoolean("Sonic", "Jumpball", false);
+	sonicIncompatible = reader.GetBoolean("Sonic", "Incompatible", sonicIncompatible);
+	sonicCyber = reader.GetBoolean("Sonic", "Cyber", sonicCyber);
+	sonicEffect = reader.GetBoolean("Sonic", "Effect", sonicEffect);
+	sonicRealtime = reader.GetBoolean("Sonic", "Realtime", sonicRealtime);
+	sonicJumpball = reader.GetBoolean("Sonic", "Jumpball", sonicJumpball);
 
-	friendsIncompatible = reader.GetBoolean("Friends", "Incompatible", false);
+	friendsIncompatible = reader.GetBoolean("Friends", "Incompatible", friendsIncompatible);
 
 	return true;
 }

@@ -180,9 +180,10 @@ extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
 				printf("[Outfit Fixes] Loading configuration from %s\n", mod->Name);
 
 				if (Configuration::incompatible)
-					printf("[Outfit Fixes] %s is marked as incompatible, disabling...\n", mod->Name);
-
-				break;
+				{
+					printf("[Outfit Fixes] %s is marked as incompatible, disabling.\n", mod->Name);
+					break;
+				}
 			}
 		}
 	}
