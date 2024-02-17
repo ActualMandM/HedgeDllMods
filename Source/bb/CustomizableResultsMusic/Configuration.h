@@ -40,7 +40,8 @@ enum Results
 	FrontiersHack = 34,
 	DIVAAC = 35,
 	DIVAACB = 36,
-	DIVAFT = 37
+	DIVAFT = 37,
+	Persona3R = 38
 };
 
 enum SRank

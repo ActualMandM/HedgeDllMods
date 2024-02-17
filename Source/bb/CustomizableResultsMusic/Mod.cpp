@@ -48,7 +48,8 @@ const char* resultsChar[] =
 	"FrontiersHack",
 	"DIVAAC",
 	"DIVAACB",
-	"DIVAFT"
+	"DIVAFT",
+	"Persona3R"
 };
 
 resultData modernResults;

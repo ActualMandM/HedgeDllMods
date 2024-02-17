@@ -107,9 +107,6 @@
       <AdditionalDependencies>detours.lib;syelog.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\Dependencies\Detours\lib\x86;..\..\..\Include\BlueBlur;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy "$(OutDir)$(TargetName)$(TargetExt)" "E:\SteamLibrary\steamapps\common\Sonic Generations\mods\CustomizableResultsMusic" /Y</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -153,9 +150,6 @@
       <AdditionalDependencies>detours.lib;syelog.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\Dependencies\Detours\lib\x86;..\..\..\Include\BlueBlur;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy "$(OutDir)$(TargetName)$(TargetExt)" "E:\SteamLibrary\steamapps\common\Sonic Generations\mods\CustomizableResultsMusic" /Y</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
