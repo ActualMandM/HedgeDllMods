@@ -1,21 +1,42 @@
 #include "Mod.h"
 #include "Configuration.h"
 
+/* v1.40: 0x140132A20 */
 SIG_SCAN
 (
-	m_SigGetCurrentOutfit,
+	m_SigGetCurrentSonicOutfit,
 	"\x0F\xBE\xC1\xFF\xC8\x83\xF8\x05\x77\x24\x48\x8D\x15\x00\x00\x00\x00\x48\x98\x8B\x8C\x82\x00\x00\x00\x00\x48\x03\xCA\xFF\xE1\xB0\x01\xC3\xB0\x02\xC3\xB0\x04\xC3\xB0\x07\xC3\xB0\x08\xC3",
 	"xxxxxxxxxxxxx????xxxxx????xxxxxxxxxxxxxxxxxxxx"
 );
 
-uint8_t outfit = 0;
+/* v1.40: 0x14A69E1F5 */
+SIG_SCAN
+(
+	m_SigGetCurrentFriendOutfit,
+	"\xE8\x00\x00\x00\x00\x84\xC0\x48\x8D\x0D\x00\x00\x00\x00\x48\x8D\x3D\x00\x00\x00\x00\xB2\x01\x48\x0F\x44\xCF\x0F\xB6\xF0\xE8\x00\x00\x00\x00\xB2\x01\x48\x89\x43\x38\x48\x89\xF9",
+	"x????xxxxx????xxx????xxxxxxxxxx????xxxxxxxxx"
+);
 
-HOOK(uint8_t, __fastcall, GetCurrentOutfit, m_SigGetCurrentOutfit(), uint8_t in_saveOutfitIdx)
+uint8_t sonicOutfit = 0;
+bool friendOutfit = false;
+
+HOOK(uint8_t, __fastcall, GetCurrentSonicOutfit, m_SigGetCurrentSonicOutfit(), uint8_t in_saveOutfitIdx)
 {
-	outfit = in_saveOutfitIdx;
-	return originalGetCurrentOutfit(in_saveOutfitIdx);
+	sonicOutfit = in_saveOutfitIdx;
+	return originalGetCurrentSonicOutfit(in_saveOutfitIdx);
 }
 
+/* v1.40: 0x1401341B0 */
+auto m_GetCurrentFriendsOutfit = READ_CALL(m_SigGetCurrentFriendOutfit());
+
+HOOK(bool, __fastcall, GetCurrentFriendsOutfit, m_GetCurrentFriendsOutfit, int64_t a1)
+{
+	bool result = originalGetCurrentFriendsOutfit(a1);
+	friendOutfit = result;
+	return result;
+}
+
+/* v1.40: 0x140912890 */
 SIG_SCAN
 (
 	m_SigSonicAuraVisibility,
@@ -23,6 +44,7 @@ SIG_SCAN
 	"xxxxxxxxxxxxx????x????xx?x"
 );
 
+/* v1.40: 0x1401584A0 */
 auto m_LoadResModel = READ_CALL(m_SigSonicAuraVisibility() - 0x1A);
 
 HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName, int64_t a2)
@@ -30,68 +52,120 @@ HOOK(int64_t, __fastcall, LoadResModel, m_LoadResModel, const char* in_modelName
 	char modelName[256];
 	strcpy(modelName, in_modelName);
 
-	if (!Configuration::incompatible && (outfit > 0 && outfit <= MAX_OUTFIT) &&
-		(StringHelper::ContainsSubstring(modelName, "chr_") && StringHelper::ContainsSubstring(modelName, "sonic")))
+	if (StringHelper::ContainsSubstring(modelName, "chr_"))
 	{
-		uint8_t modelIdx = outfit - 1;
-
-		if (!strcmp(in_modelName, "chr_sonic"))
-			GetModelName(modelName, modelIdx, "sonic", nullptr);
-
-		else if (!strcmp(in_modelName, "chr_sonicT"))
-			GetModelName(modelName, modelIdx, "sonic", nullptr);
-
-		else if (!strcmp(in_modelName, "chr_sonic_aura"))
-			GetModelName(modelName, modelIdx, "sonic", "aura");
-
-		else if (!strcmp(in_modelName, "chr_sonic_shape"))
-			GetModelName(modelName, modelIdx, "sonic", "shape");
-
-		else if (!strcmp(in_modelName, "chr_supersonic"))
-			GetModelName(modelName, modelIdx, "supersonic", nullptr);
-
-		else if (!strcmp(in_modelName, "chr_supersonic_aura"))
-			GetModelName(modelName, modelIdx, "supersonic", "aura");
-
-		else if (!strcmp(in_modelName, "chr_supersonic_shape"))
-			GetModelName(modelName, modelIdx, "supersonic", "shape");
-
-		else if (!strcmp(in_modelName, "chr_supersonic2"))
-			GetModelName(modelName, modelIdx, "supersonic2", nullptr);
-
-		// Character mods can toggle these on via config
-		else
+		// Sonic
+		if (!Configuration::sonicIncompatible && (sonicOutfit > 0 && sonicOutfit <= MAX_OUTFIT) &&
+			StringHelper::ContainsSubstring(modelName, "sonic"))
 		{
-			if (Configuration::sonicCyber && !strcmp(in_modelName, "chr_soniccyber"))
-				GetModelName(modelName, modelIdx, "soniccyber", nullptr);
+			uint8_t modelIdx = sonicOutfit - 1;
 
-			if (Configuration::sonicEffect)
+			if (StringHelper::Compare(in_modelName, "chr_sonic"))
+				GetSonicName(modelName, modelIdx, "sonic", nullptr);
+
+			else if (StringHelper::Compare(in_modelName, "chr_sonicT"))
+				GetSonicName(modelName, modelIdx, "sonic", nullptr);
+
+			else if (StringHelper::Compare(in_modelName, "chr_sonic_aura"))
+				GetSonicName(modelName, modelIdx, "sonic", "aura");
+
+			else if (StringHelper::Compare(in_modelName, "chr_sonic_shape"))
+				GetSonicName(modelName, modelIdx, "sonic", "shape");
+
+			else if (StringHelper::Compare(in_modelName, "chr_supersonic"))
+				GetSonicName(modelName, modelIdx, "supersonic", nullptr);
+
+			else if (StringHelper::Compare(in_modelName, "chr_supersonic_aura"))
+				GetSonicName(modelName, modelIdx, "supersonic", "aura");
+
+			else if (StringHelper::Compare(in_modelName, "chr_supersonic_shape"))
+				GetSonicName(modelName, modelIdx, "supersonic", "shape");
+
+			else if (StringHelper::Compare(in_modelName, "chr_supersonic2"))
+				GetSonicName(modelName, modelIdx, "supersonic2", nullptr);
+
+			// Character mods can toggle these on via config
+			else
 			{
-				if (!strcmp(in_modelName, "chr_supersonic_kick_L"))
-					GetModelName(modelName, modelIdx, "supersonic", "kick_L");
+				if (Configuration::sonicCyber && StringHelper::Compare(in_modelName, "chr_soniccyber"))
+					GetSonicName(modelName, modelIdx, "soniccyber", nullptr);
 
-				else if (!strcmp(in_modelName, "chr_supersonic_kick_R"))
-					GetModelName(modelName, modelIdx, "supersonic", "kick_R");
+				if (Configuration::sonicEffect)
+				{
+					if (StringHelper::Compare(in_modelName, "chr_supersonic_kick_L"))
+						GetSonicName(modelName, modelIdx, "supersonic", "kick_L");
 
-				else if (!strcmp(in_modelName, "chr_supersonic_punch_L"))
-					GetModelName(modelName, modelIdx, "supersonic", "punch_L");
+					else if (StringHelper::Compare(in_modelName, "chr_supersonic_kick_R"))
+						GetSonicName(modelName, modelIdx, "supersonic", "kick_R");
 
-				else if (!strcmp(in_modelName, "chr_supersonic_punch_R"))
-					GetModelName(modelName, modelIdx, "supersonic", "punch_R");
+					else if (StringHelper::Compare(in_modelName, "chr_supersonic_punch_L"))
+						GetSonicName(modelName, modelIdx, "supersonic", "punch_L");
+
+					else if (StringHelper::Compare(in_modelName, "chr_supersonic_punch_R"))
+						GetSonicName(modelName, modelIdx, "supersonic", "punch_R");
+				}
+
+				if (Configuration::sonicRealtime)
+				{
+					if (StringHelper::Compare(in_modelName, "chr_supersoniccyber"))
+						GetSonicName(modelName, modelIdx, "supersoniccyber", nullptr);
+
+					else if (StringHelper::Compare(in_modelName, "chr_supersonicdamage"))
+						GetSonicName(modelName, modelIdx, "supersonicdamage", nullptr);
+				}
+
+				// NOTE: There's chr_supersonicspin too, but it only shows up with Homing Shot and Homing Attack
+				if (Configuration::sonicJumpball && StringHelper::Compare(in_modelName, "chr_sonicspin"))
+					GetSonicName(modelName, modelIdx, "sonicspin", nullptr);
 			}
+		}
 
-			if (Configuration::sonicRealtime)
+		// Friends
+		if (friendOutfit &&
+			(StringHelper::ContainsSubstring(modelName, "amy") || StringHelper::ContainsSubstring(modelName, "knuckles") || StringHelper::ContainsSubstring(modelName, "tails")))
+		{
+			if (!Configuration::amyIncompatible && StringHelper::Compare(in_modelName, "chr_amyP"))
+				GetFriendName(modelName, "amy", "P");
+
+			else if (!Configuration::knucklesIncompatible && StringHelper::Compare(in_modelName, "chr_knucklesP"))
+				GetFriendName(modelName, "knuckles", "P");
+
+			else if (!Configuration::tailsIncompatible && StringHelper::Compare(in_modelName, "chr_tailsP"))
+				GetFriendName(modelName, "tails", "P");
+
+			// Character mods can toggle these on via config
+			else
 			{
-				if (!strcmp(in_modelName, "chr_supersoniccyber"))
-					GetModelName(modelName, modelIdx, "supersoniccyber", nullptr);
+				if (!Configuration::amyIncompatible)
+				{
+					if (Configuration::amyHammer && StringHelper::Compare(in_modelName, "chr_amyhammer"))
+						GetFriendName(modelName, "amy", "hammer");
 
-				else if (!strcmp(in_modelName, "chr_supersonicdamage"))
-					GetModelName(modelName, modelIdx, "supersonicdamage", nullptr);
+					else if (Configuration::amyTarot && StringHelper::Compare(in_modelName, "chr_amytarot"))
+						GetFriendName(modelName, "amy", "tarot");
+				}
+
+				if (!Configuration::knucklesIncompatible)
+				{
+					if (Configuration::knucklesDrill && StringHelper::Compare(in_modelName, "chr_knucklesdrill"))
+						GetFriendName(modelName, "knuckles", "drill");
+				}
+
+				if (!Configuration::tailsIncompatible)
+				{
+					if (Configuration::tailsCyblaster && StringHelper::Compare(in_modelName, "chr_cyblaster"))
+						GetFriendName(modelName, "cyblaster", nullptr);
+
+					else if (Configuration::tailsCyclone && StringHelper::Compare(in_modelName, "chr_cyclone"))
+						GetFriendName(modelName, "cyclone", nullptr);
+
+					else if (Configuration::tailsSpanner && StringHelper::Compare(in_modelName, "chr_tailsspanner"))
+						GetFriendName(modelName, "tails", "spanner");
+
+					else if (Configuration::tailsSpring && StringHelper::Compare(in_modelName, "chr_tailsspring"))
+						GetFriendName(modelName, "tails", "spring");
+				}
 			}
-
-			// NOTE: There's chr_supersonicspin too, but it only shows up with Homing Shot and Homing Attack
-			if (Configuration::sonicJumpball && !strcmp(in_modelName, "chr_sonicspin"))
-				GetModelName(modelName, modelIdx, "sonicspin", nullptr);
 		}
 	}
 
@@ -102,16 +176,21 @@ extern "C" __declspec(dllexport) void Init()
 {
 	if (sigValid)
 	{
-		// Disable aura visibility being removed for certain outfits
+		// Disable certain outfits removing Sonic's aura
 		WRITE_NOP(m_SigSonicAuraVisibility(), 8);
-		INSTALL_HOOK(GetCurrentOutfit);
 
-		printf("[Sonic Outfit Fixes] m_LoadResModel: 0x%llx\n", m_LoadResModel);
+		// Install hooks for getting outfits
+		INSTALL_HOOK(GetCurrentSonicOutfit);
+		printf("[Outfit Fixes] m_GetCurrentFriendsOutfit: 0x%llx\n", m_GetCurrentFriendsOutfit);
+		INSTALL_HOOK(GetCurrentFriendsOutfit);
+
+		// Install hook for loading ResModel
+		printf("[Outfit Fixes] m_LoadResModel: 0x%llx\n", m_LoadResModel);
 		INSTALL_HOOK(LoadResModel);
 	}
 	else
 	{
-		rangersVersionWarning(TEXT("Sonic Outfit Fixes"));
+		rangersVersionWarning(TEXT("Outfit Fixes"));
 	}
 }
 
@@ -122,21 +201,16 @@ extern "C" __declspec(dllexport) void PostInit(ModInfo* mods)
 		// Check for config in loaded mods
 		for (Mod* mod : *mods->ModList)
 		{
+			ModIniData::Data modInfo = ModIniData::Data::ReadConfig(mod->Path);
+
 			// Prevent loading config from this mod
-			if (!strcmp(mod->Name, "Sonic Outfit Fixes"))
+			if (StringHelper::Compare(modInfo.id, "mandm.sonicfrontiers.dlcoutfitfixes"))
 				continue;
 
 			std::string configPath = StringHelper::GetSubstringBeforeLastChar(mod->Path, '\\').append("\\OutfitFixes.ini");
 
 			if (Configuration::Load(configPath))
-			{
-				printf("[Sonic Outfit Fixes] Loading configuration from %s\n", mod->Name);
-
-				if (Configuration::incompatible)
-					printf("[Sonic Outfit Fixes] %s is marked as incompatible, disabling...\n", mod->Name);
-
-				break;
-			}
+				printf("[Outfit Fixes] Loading configuration from %s\n", mod->Name);
 		}
 	}
 }
