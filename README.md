@@ -12,6 +12,7 @@ A repository hosting DLL source code for Hedgehog Engine mods.
   - [Link Sonic](Source/bb/LinkSonic)
   - [Oops All Diffuse](Source/bb/OopsAllDiffuse)
   - [PlayStation Prompts](Source/bb/PlayStationPrompts)
+  - [Shadow Costume for Classic Sonic](Source/bb/OrionShadow)
 - Sonic Frontiers
   - [10 Years](Source/rangers/10Years)
   - [Outfit Fixes](Source/rangers/DLCOutfitFixes) (formerly *Sonic Outfit Fixes* and *DLC Outfit Fixes*)
