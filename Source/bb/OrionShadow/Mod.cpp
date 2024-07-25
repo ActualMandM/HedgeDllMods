@@ -18,8 +18,8 @@ HOOK(void, __fastcall, _ClassicUpdate, 0xDDABA0, Sonic::Player::CSonicClassic* T
 	{
 		JetNodeL = boost::make_shared<Sonic::CMatrixNodeTransform>();
 		JetNodeR = boost::make_shared<Sonic::CMatrixNodeTransform>();
-		JetNodeL->m_Transform.SetRotationAndPosition(CQuaternion::FromAngleAxis(90.0f * MathUtil::DegreesToRadians, CVector::Forward()), CVector(0, 0, -0.15f));
-		JetNodeR->m_Transform.SetRotationAndPosition(CQuaternion::FromAngleAxis(90.0f * MathUtil::DegreesToRadians, CVector::Forward()), CVector(0, 0, -0.15f));
+		JetNodeL->m_Transform.SetRotationAndPosition(CQuaternion::FromAngleAxis(90.0f * MathUtil::DegreesToRadians, CVector::Forward()), CVector::Zero());
+		JetNodeR->m_Transform.SetRotationAndPosition(CQuaternion::FromAngleAxis(90.0f * MathUtil::DegreesToRadians, CVector::Forward()), CVector::Zero());
 		JetNodeL->SetParent(This->m_spCharacterModel->GetNode("Foot_L").get());
 		JetNodeR->SetParent(This->m_spCharacterModel->GetNode("Foot_R").get());
 		JetHandleL = pGameDocument->m_pMember->m_pParticleManager->AddParticle(JetNodeL, "ef_classic_shadow_jet_shoe");
@@ -48,6 +48,7 @@ HOOK(void, __fastcall, MsgRestartStage, 0xE76810, Sonic::Player::CPlayer* This, 
 	JetHandleL = nullptr;
 	JetHandleR = nullptr;
 }
+
 HOOK(void, __fastcall, SonicRemoveCallback, 0xDD7900, Sonic::Player::CPlayer* This, void* Edx, void* A1)
 {
 	originalSonicRemoveCallback(This, 0, A1);
@@ -61,7 +62,7 @@ extern "C" __declspec(dllexport) void Init(ModInfo* mod)
 {
 	INIReader reader(mod->CurrentMod->Path);
 
-	if (!_stricmp(reader.Get("Main", "IncludeDir1", "disk_skate").c_str(), "disk_skate"))
+	if (!_stricmp(reader.Get("Main", "IncludeDir1", "dummy").c_str(), "disk_skate"))
 	{
 		INSTALL_HOOK(_ClassicUpdate);
 		INSTALL_HOOK(MsgRestartStage);
