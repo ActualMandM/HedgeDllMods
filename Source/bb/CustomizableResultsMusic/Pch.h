@@ -7,6 +7,7 @@
 #include <detours.h>
 
 // BlueBlur
+#define _SILENCE_CXX23_DENORM_DEPRECATION_WARNING
 #include <BlueBlur.h>
 
 // std
