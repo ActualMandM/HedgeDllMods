@@ -27,7 +27,7 @@ HOOK(void, __fastcall, CPlayerSpeedUpdateParallel, 0xE6BF20, Sonic::Player::CPla
 	uint32_t& ringCount = context->m_RingCount;
 	float& boostAmount = context->m_ChaosEnergy;
 	const float maxBoostAmount = context->GetMaxChaosEnergy();
-	const uint64_t skills = (uint64_t)context->m_Field1A4; // change this back to m_pSkills once BlueBlur fixes mapping
+	const uint64_t skills = (uint64_t)context->m_SkillsP1;
 
 	// Booleans
 	const bool isBPC = Configuration::bpcSuper && Helpers::CheckCurrentStage("bpc");
